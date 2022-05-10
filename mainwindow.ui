@@ -24,11 +24,6 @@
        <attribute name="title">
         <string>window 1</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QGraphicsView" name="graphicsView_main"/>
-        </item>
-       </layout>
       </widget>
      </widget>
     </item>
