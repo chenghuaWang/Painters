@@ -19,8 +19,12 @@ namespace painters {
 
     enum class p_component_type {
         None = 0,
+        // below for gif class
         Brush,
         Shape,
+        // for alpha channel.
+        Pixmap,
+        // other component.
         Image
     };
 
@@ -93,6 +97,18 @@ namespace painters {
         QPainterPath        m_path;
         QVector<QPointF>    m_points;
         QSize               m_bounding_box_size;
+    };
+
+    class p_pixmap_component: public p_component_obj, public QGraphicsPixmapItem {
+    public:
+        p_pixmap_component(const std::string &name= "pixmap"):
+            p_component_obj(p_component_type::Pixmap, name),
+            QGraphicsPixmapItem(nullptr) {
+            // initialize. TODO
+        }
+    private:
+
+
     };
 
 }; //! namespace painters
