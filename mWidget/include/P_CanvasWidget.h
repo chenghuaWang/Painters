@@ -34,9 +34,16 @@ namespace painters {
         Pen,
         Shape,
         Image,
-        Effect
+        Effect,
+        // for pixmap
+        Pixmap,
+        Pixmap_Pen_mutable,
+        Pixmap_Erease_mutable,
     };
 
+    /*!
+     * @brief TODO scorrled.
+     */
     class p_canvas: public QGraphicsScene {
     public:
         p_canvas() {
@@ -62,7 +69,7 @@ namespace painters {
 
 
     private: ///< numerous flags setting.
-        tool_type           m_cur_tool = tool_type::Pen;
+        tool_type           m_cur_tool = tool_type::None;
         bool                m_cur_brush_enable = false;
 
     private: ///< scene global data
