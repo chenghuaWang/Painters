@@ -32,7 +32,7 @@ namespace painters {
         None = 0,
         Select,
         Pen,
-        Shape,
+        Rect,
         Image,
         Effect,
         // for pixmap
@@ -69,14 +69,16 @@ namespace painters {
 
 
     private: ///< numerous flags setting.
-        tool_type           m_cur_tool = tool_type::None;
+        tool_type           m_cur_tool = tool_type::Rect;
         bool                m_cur_brush_enable = false;
+        bool                m_cur_rect_enable = false;
 
     private: ///< scene global data
         QSize               m_scene_size = QSize(1024, 720);
 
     private: ///< temporary data
         p_brush_component   *m_cur_brush = nullptr;
+        p_rect_component    *m_cur_rect = nullptr;
     };
 
 }
