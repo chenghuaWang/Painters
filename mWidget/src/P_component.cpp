@@ -2,27 +2,7 @@
 
 namespace painters {
 
-void p_brush_component::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
-}
-
-void p_brush_component::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        if (event->modifiers() == Qt::AltModifier) {
-            setSelected(true);
-        }
-        else if (event->modifiers() == Qt::ShiftModifier) {
-
-        }
-    }
-    else {
-        QGraphicsItem::mousePressEvent(event);
-        event->ignore();
-    }
-}
-void p_brush_component::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    QGraphicsItem::mouseReleaseEvent(event);
-}
+OVERLOAD_FUNC_IMPL(p_brush_component)
 
 void p_brush_component::move_event_from_scene(const QPointF &_a) {
     m_path.lineTo(_a);
@@ -52,7 +32,9 @@ void p_brush_component::release_event_from_scene(const QPointF &_a) {
         m_points.append(point_due);
     }
 
-    _interpolation_(0);
+    if (m_interpolation_enable) {
+        _interpolation_(0);
+    }
 
     QRectF bound_rect = m_path.boundingRect();
     m_bounding_box_size = QSize(bound_rect.width(), bound_rect.height());
@@ -104,6 +86,34 @@ void p_brush_component::set_selectable(bool enable) {
     }
 }
 
-void set_movable(bool enable);
+void p_brush_component::set_movable(bool enable) {
+    if (enable) {
+        setFlag(QGraphicsItem::ItemIsMovable);
+    } else {
 
+    }
+}
 }; //! namespace painters
+
+namespace painters {
+
+OVERLOAD_FUNC_IMPL(p_rect_component);
+
+void p_rect_component::move_event_from_scene(const QPointF &_a) {
+    m_end_point = _a;
+    setRect(m_start_point.x(), m_start_point.y(), m_end_point.x(), m_end_point.y());
+    this->update();
+}
+
+void p_rect_component::press_event_from_scene(const QPointF &_a) {
+    m_start_point = _a;
+}
+
+void p_rect_component::release_event_from_scene(const QPointF &_a) {
+    m_end_point = _a;
+    m_center_point = (m_start_point + m_end_point) / 2;
+    setRect(m_start_point.x(), m_start_point.y(), m_end_point.x(), m_end_point.y());
+    this->update();
+}
+
+} //! namespace painters
