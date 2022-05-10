@@ -51,7 +51,7 @@
 #include <memory>
 #include <utility>
 
-///< inlude the filr from Core/include.
+///< inlude the file from Core/include.
 
 
 // Macro defined
