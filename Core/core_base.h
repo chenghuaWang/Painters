@@ -38,6 +38,9 @@
 #include <QFont>
 #include <QPoint>
 #include <QPen>
+#include <QWheelEvent>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 ///< inlcude the GNU-std from there.
 #include <cinttypes>
