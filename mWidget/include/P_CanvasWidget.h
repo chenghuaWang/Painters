@@ -26,6 +26,35 @@
 #include "P_component.h"
 #include <QGraphicsScene>
 
+///< TODO add brush counter.
+#define MOUSE_EVENT_PRESS(object_ptr, object_type) \
+    if (event->button() == Qt::LeftButton && \
+            event->modifiers() != Qt::AltModifier && \
+            event->modifiers() != Qt::ShiftModifier) { \
+        if (_a.x() < 0 || _a.x() > m_scene_size.width()) break; \
+        if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
+        object_ptr##_enable = true; \
+        object_ptr = new object_type(); \
+        object_ptr->press_event_from_scene(_a); \
+        addItem(object_ptr); \
+    } \
+
+#define MOUSE_EVENT_MOVE(object_ptr) \
+    if (object_ptr##_enable) { \
+        if (_a.x() < 0 || _a.x() > m_scene_size.width()) break; \
+        if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
+        object_ptr->move_event_from_scene(_a); \
+    }\
+
+#define MOUSE_EVENT_RELEASE(object_ptr) \
+    if (object_ptr##_enable && event->button() == Qt::LeftButton) { \
+        object_ptr##_enable = false; \
+        if (_a.x() < 0 || _a.x() > m_scene_size.width()) break; \
+        if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
+        object_ptr->release_event_from_scene(_a); \
+        object_ptr = nullptr; \
+    } \
+
 namespace painters {
 
     enum class tool_type {
@@ -33,6 +62,7 @@ namespace painters {
         Select,
         Pen,
         Rect,
+        Circle,
         Image,
         Effect,
         // for pixmap
@@ -69,9 +99,10 @@ namespace painters {
 
 
     private: ///< numerous flags setting.
-        tool_type           m_cur_tool = tool_type::Rect;
+        tool_type           m_cur_tool = tool_type::Circle;
         bool                m_cur_brush_enable = false;
         bool                m_cur_rect_enable = false;
+        bool                m_cur_circle_enable = false;
 
     private: ///< scene global data
         QSize               m_scene_size = QSize(1024, 720);
@@ -79,6 +110,7 @@ namespace painters {
     private: ///< temporary data
         p_brush_component   *m_cur_brush = nullptr;
         p_rect_component    *m_cur_rect = nullptr;
+        p_circle_component  *m_cur_circle =  nullptr;
     };
 
 }
