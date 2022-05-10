@@ -99,21 +99,106 @@ namespace painters {
 
 OVERLOAD_FUNC_IMPL(p_rect_component);
 
+void p_rect_component::__init__() {
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+}
+
 void p_rect_component::move_event_from_scene(const QPointF &_a) {
     m_end_point = _a;
-    setRect(m_start_point.x(), m_start_point.y(), m_end_point.x(), m_end_point.y());
+
+    auto [v1, v2] = __get_rect_payload__();
+    setRect(v1.x(), v1.y(), v2.x(), v2.y());
+
     this->update();
 }
 
 void p_rect_component::press_event_from_scene(const QPointF &_a) {
     m_start_point = _a;
+    m_end_point = _a;
 }
 
 void p_rect_component::release_event_from_scene(const QPointF &_a) {
     m_end_point = _a;
     m_center_point = (m_start_point + m_end_point) / 2;
-    setRect(m_start_point.x(), m_start_point.y(), m_end_point.x(), m_end_point.y());
+
+    auto [v1, v2] = __get_rect_payload__();
+    setRect(v1.x(), v1.y(), v2.x(), v2.y());
+
+    //this->setPos(m_center_point);
+    this->prepareGeometryChange();
     this->update();
+    m_dirty = true;
+}
+
+std::pair<QPointF, QPointF> p_rect_component::__get_rect_payload__() {
+    double x1 = m_start_point.x();
+    double y1 = m_start_point.y();
+    double x2 = m_end_point.x();
+    double y2 = m_end_point.y();
+
+    double left_top_x = P_MIN(x1, x2);
+    double left_top_y = P_MIN(y1, y2);
+    double right_bottom_x = P_MAX(x1, x2);
+    double right_bottom_y = P_MAX(y1, y2);
+
+    double w = right_bottom_x - left_top_x;
+    double h = right_bottom_y - left_top_y;
+
+    return std::pair<QPointF, QPointF>({left_top_x, left_top_y}, {w, h});
 }
 
 } //! namespace painters
+
+namespace painters {
+
+    OVERLOAD_FUNC_IMPL(p_circle_component);
+
+    void p_circle_component::__init__() {
+        setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+    }
+
+    void p_circle_component::move_event_from_scene(const QPointF &_a) {
+        m_end_point = _a;
+
+        auto [v1, v2] = __get_rect_payload__();
+        setRect(v1.x(), v1.y(), v2.x(), v2.y());
+
+        this->update();
+    }
+
+    void p_circle_component::press_event_from_scene(const QPointF &_a) {
+        m_start_point= _a;
+        m_end_point = _a;
+    }
+
+    void p_circle_component::release_event_from_scene(const QPointF &_a) {
+        m_end_point = _a;
+        m_center_point = (m_start_point + m_end_point) / 2;
+
+        auto [v1, v2] = __get_rect_payload__();
+        setRect(v1.x(), v1.y(), v2.x(), v2.y());
+
+        //this->setPos(m_center_point);
+        this->prepareGeometryChange();
+        this->update();
+        m_dirty = true;
+    }
+
+    std::pair<QPointF, QPointF> p_circle_component::__get_rect_payload__() {
+        double x1 = m_start_point.x();
+        double y1 = m_start_point.y();
+        double x2 = m_end_point.x();
+        double y2 = m_end_point.y();
+
+        double left_top_x = P_MIN(x1, x2);
+        double left_top_y = P_MIN(y1, y2);
+        double right_bottom_x = P_MAX(x1, x2);
+        double right_bottom_y = P_MAX(y1, y2);
+
+        double w = right_bottom_x - left_top_x;
+        double h = right_bottom_y - left_top_y;
+
+        return std::pair<QPointF, QPointF>({left_top_x, left_top_y}, {w, h});
+    }
+
+}

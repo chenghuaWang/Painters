@@ -56,6 +56,7 @@ namespace painters {
         // below for gif class
         Brush,
         Rect,
+        Circle,
         // for alpha channel.
         Pixmap,
         // other component.
@@ -139,8 +140,6 @@ namespace painters {
             // initialize. TODO
         }
     private:
-
-
     };
 
     class p_rect_component: public p_component_obj, public QGraphicsRectItem {
@@ -150,8 +149,17 @@ namespace painters {
             QGraphicsRectItem(nullptr),
             m_color_out(0, 32, 128, 40),
             m_color_inner(0, 128, 32, 40) {
-            // initialize. TODO
+            // initialize.
+            m_pen_out.setColor(m_color_out);
+            m_pen_out.setWidth(4);
+            m_brush.setColor(m_color_inner);
+            m_brush.setStyle(Qt::SolidPattern);
+            setPen(m_pen_out);
+            setBrush(m_brush);
+            __init__();
         }
+
+        void __init__();
 
     OVERLOAD_EVENT:
         OVERLOAD_FUNC;
@@ -190,6 +198,9 @@ namespace painters {
         QPen &get_pen_out() { return m_pen_out; }
 
     private:
+        std::pair<QPointF, QPointF> __get_rect_payload__();
+
+    private:
         bool        m_dirty = false;
         QPointF     m_center_point;
         QPointF     m_start_point;
@@ -198,8 +209,92 @@ namespace painters {
         QColor      m_color_out;
         QBrush      m_brush;
         QColor      m_color_inner;
+        QSize       m_bounding_box_size;
     };
 
+    class p_circle_component: public p_component_obj, public QGraphicsEllipseItem {
+    public:
+        p_circle_component(const std::string &name= "circle"):
+            p_component_obj(p_component_type::Circle, name),
+            QGraphicsEllipseItem(nullptr),
+            m_color_out(0, 128, 32, 40),
+            m_color_inner(0, 128, 32, 40){
+            m_pen_out.setColor(m_color_out);
+            m_brush.setColor(m_color_inner);
+            m_brush.setStyle(Qt::BrushStyle::SolidPattern);
+            m_pen_out.setStyle(Qt::PenStyle::SolidLine);
+            setPen(m_pen_out);
+            setBrush(m_brush);
+            m_dirty = false;
+        }
+
+        void __init__();
+
+    OVERLOAD_EVENT:
+        OVERLOAD_FUNC;
+
+    EVENT_FROM_SCENE:
+        EVENT_FROM_SCENE_FUNC;
+
+    public:
+        const QColor &get_color_out_const() { return m_color_out; }
+        QColor &get_out_color() { return m_color_out; }
+
+        const QColor &get_color_inner_const() { return m_color_inner; }
+        QColor &get_inner_color() { return m_color_inner; }
+
+        const QPen &get_pen_const() { return m_pen_out; }
+        QPen &get_pen() { return m_pen_out; }
+
+        const QBrush &get_brush_const() { return m_brush; }
+        QBrush &get_brush() { return m_brush; }
+
+        void set_color_out(const QColor &rhs) {
+            m_color_out = rhs;
+            m_pen_out.setColor(m_color_out);
+        }
+
+        void set_color_inner(const QColor &rhs) {
+            m_color_inner = rhs;
+            m_pen_out.setColor(m_color_inner);
+        }
+
+    private:
+        std::pair<QPointF, QPointF> __get_rect_payload__();
+
+    private:
+        bool        m_dirty = false;
+        QPointF     m_center_point;
+        qreal       m_r;
+        QColor      m_color_out;
+        QPen        m_pen_out;
+        QBrush      m_brush;
+        QColor      m_color_inner;
+
+        QPointF     m_start_point;
+        QPointF     m_end_point;
+    };
+
+    class p_line_component: public p_component_obj, public QGraphicsLineItem {
+    public:
+
+    private:
+    };
+
+    class p_image_component: public p_component_obj, public QGraphicsPixmapItem {
+    public:
+        p_image_component(const std::string &file_path, const std::string &name= "image"):
+            p_component_obj(p_component_type::Image, name),
+            QGraphicsPixmapItem(nullptr),
+            m_alpha_channel(255),
+            m_file_path(file_path){
+
+        }
+
+    private:
+        uint32_t            m_alpha_channel;
+        std::string         m_file_path;
+    };
 
 }; //! namespace painters
 
