@@ -50,6 +50,7 @@
 #include <functional>
 #include <memory>
 #include <utility>
+#include <algorithm>
 
 ///< inlude the file from Core/include.
 
