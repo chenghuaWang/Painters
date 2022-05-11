@@ -63,15 +63,18 @@ endif()
 # set basic include path
 set(p_core_include_dir ${CMAKE_SOURCE_DIR}/Core)
 set(p_mWidget_include_dir ${CMAKE_SOURCE_DIR}/mWidget/include)
+set(p_editor_include_dir ${CMAKE_SOURCE_DIR}/Editor/include)
 
 include_directories(${p_core_include_dir})
 include_directories(${p_mWidget_include_dir})
+include_directories(${p_editor_include_dir})
 
 # self-defined add core lib
 add_subdirectory(3rdparty)
 add_subdirectory(Core)
 add_subdirectory(mWidget)
-target_link_libraries(Painters PRIVATE Qt${QT_VERSION_MAJOR}::Widgets p_core p_m_widget)
+add_subdirectory(Editor)
+target_link_libraries(Painters PRIVATE Qt${QT_VERSION_MAJOR}::Widgets p_core p_m_widget p_editor)
 
 set_target_properties(Painters PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

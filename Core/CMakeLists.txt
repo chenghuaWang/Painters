@@ -2,6 +2,8 @@ project(p_core CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include_directories(./include/)
+
 file(GLOB_RECURSE p_core_include ./inlcude/*.h)
 file(GLOB_RECURSE p_core_src ./src/*.cpp)
 file(GLOB_RECURSE p_core_dep *.h)
