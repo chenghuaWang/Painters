@@ -124,7 +124,7 @@ void p_rect_component::release_event_from_scene(const QPointF &_a) {
     auto [v1, v2] = __get_rect_payload__();
     setRect(v1.x(), v1.y(), v2.x(), v2.y());
 
-    //this->setPos(m_center_point);
+    // this->setPos(m_center_point);
     this->prepareGeometryChange();
     this->update();
     m_dirty = true;
@@ -200,5 +200,27 @@ namespace painters {
 
         return std::pair<QPointF, QPointF>({left_top_x, left_top_y}, {w, h});
     }
+}
+
+namespace painters {
+
+OVERLOAD_FUNC_IMPL(p_image_component);
+
+void p_image_component::__init__() {
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+}
+
+void p_image_component::move_event_from_scene(const QPointF &_a) {
+    this->update();
+}
+
+void p_image_component::press_event_from_scene(const QPointF &_a) {
+    return;
+}
+
+void p_image_component::release_event_from_scene(const QPointF &_a) {
+    this->prepareGeometryChange();
+    this->update();
+}
 
 }
