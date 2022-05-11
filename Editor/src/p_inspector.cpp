@@ -11,9 +11,9 @@ void p_brush_inspector::__init__() {
 
     QPainterPath tmp;
 
-    tmp.moveTo(90, 50);
+    tmp.moveTo(100, 40);
     for (int i = 1; i < 5; ++i) {
-        tmp.lineTo(50 + 40 * cos(0.8 * i * M_PI), 50 + 40 * sin(0.8 * i * M_PI));
+        tmp.lineTo(40 + 60 * cos(0.8 * i * M_PI), 40 + 60 * sin(0.8 * i * M_PI));
     }
     tmp.closeSubpath();
 
@@ -30,7 +30,7 @@ void p_brush_inspector::__init__() {
     m_brush_type_combobox->addItem("SolidLine");
     m_brush_type_combobox->addItem("DotDashLine");
     m_brush_type_combobox->addItem("DotLine");
-    m_brush_type_combobox->addItem("DotDashLine");
+    m_brush_type_combobox->addItem("DashLine");
 
     // init slider
     m_r_slider->setMaximum(255);
@@ -52,6 +52,8 @@ void p_brush_inspector::__init__() {
     connect(this->m_g_slider.get(), SIGNAL(valueChanged(int)), this, SLOT(slots_change_slider_g(int))); ///< slider g
     connect(this->m_b_slider.get(), SIGNAL(valueChanged(int)), this, SLOT(slots_change_slider_b(int))); ///< slider b
     connect(this->m_a_slider.get(), SIGNAL(valueChanged(int)), this, SLOT(slots_change_slider_a(int))); ///< slider a
+    connect(this->m_brush_thickness_spinbox.get(), SIGNAL(valueChanged(qreal)), this, SLOT(slots_change_doublespin_box(qreal)));
+    connect(this->m_brush_type_combobox.get(), SIGNAL(currentTextChanged(const QString&)), this, SLOT(slots_change_combobox_style(const QString&)));
 
     // below for init emit
     emit signal_pen_changed(m_pen);
@@ -94,6 +96,18 @@ void p_brush_inspector::slots_change_slider_b(int val) {
 void p_brush_inspector::slots_change_slider_a(int val) {
     m_color.setAlpha(val);
     m_pen.setColor(m_color);
+    __redraw__();
+    emit signal_pen_changed(m_pen);
+}
+
+void p_brush_inspector::slots_change_doublespin_box(qreal val) {
+    m_pen.setWidthF(val);
+    __redraw__();
+    emit signal_pen_changed(m_pen);
+}
+
+void p_brush_inspector::slots_change_combobox_style(const QString& _a) {
+    m_pen.setStyle(map_to_type(_a));
     __redraw__();
     emit signal_pen_changed(m_pen);
 }

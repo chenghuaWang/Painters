@@ -41,7 +41,19 @@ namespace painters {
 
             m_pen.setColor(m_color);
             m_pen.setStyle(Qt::PenStyle::SolidLine);
-            m_pen.setWidth(10);
+            m_pen.setWidthF(8);
+        }
+
+    public:
+        std::map<QString, Qt::PenStyle> string_map_type = {
+            {"SolidLine", Qt::SolidLine},
+            {"DotDashLine", Qt::DashDotDotLine},
+            {"DotLine", Qt::DotLine},
+            {"DashLine", Qt::DashLine}
+        };
+
+        Qt::PenStyle map_to_type(const QString &_a) {
+            return string_map_type[_a];
         }
 
     public:
@@ -68,6 +80,8 @@ namespace painters {
         void slots_change_slider_g(int val);
         void slots_change_slider_b(int val);
         void slots_change_slider_a(int val);
+        void slots_change_doublespin_box(qreal val);
+        void slots_change_combobox_style(const QString& _a);
 
     public:
         QColor              m_color;

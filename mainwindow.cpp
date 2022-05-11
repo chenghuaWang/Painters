@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_brush_inspector.set_choose_button(ui->pushButton_brush_color);
     m_brush_inspector.set_brush_type_combobox(ui->comboBox_brush_type);
     m_brush_inspector.set_graphic_view(ui->graphicsView_brush);
+    m_brush_inspector.set_brush_thickness_spinbox(ui->doubleSpinBox_brush_thickness);
     m_brush_inspector.__init__();
 
     // init other inspector TODO.
