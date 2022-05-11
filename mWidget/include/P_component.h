@@ -102,17 +102,23 @@ namespace painters {
 
     public:
         void __init__();
-        QPen &get_pen() { return m_pen; }
         QColor &get_color() { return m_color; }
         bool is_dirty() { return m_dirty; }
 
-        void set_pen(QPen &pen) { m_pen = pen; }
-        void set_color(QColor &color) { m_color= color, m_pen.setColor(color); }
+        void set_pen(QPen &pen) { m_pen = pen; setPen(m_pen); }
+        void set_color(QColor &color) { m_color= color, m_pen.setColor(color); setPen(m_pen);}
         void set_pen_width(int width) { m_pen.setWidth(width); }
         void set_pen_style(Qt::PenStyle style) { m_pen.setStyle(style); }
 
         void set_selectable(bool enable);
         void set_movable(bool enable);
+
+        void set_interpolation(bool enable) { m_interpolation_enable = enable; }
+
+        const QPen &get_pen_const() { return m_pen; }
+        QPen &get_pen() { return m_pen; }
+
+
 
     EVENT_FROM_SCENE:
         EVENT_FROM_SCENE_FUNC;
@@ -122,7 +128,7 @@ namespace painters {
 
     private:
         bool                m_dirty; ///< To determine if this component has be draw or not.
-        bool                m_interpolation_enable = true;
+        bool                m_interpolation_enable = false;
         QPointF             m_start_point;
         QPointF             m_end_point;
         QPen                m_pen;
@@ -225,6 +231,7 @@ namespace painters {
             m_pen_out.setStyle(Qt::PenStyle::SolidLine);
             setPen(m_pen_out);
             setBrush(m_brush);
+            __init__();
             m_dirty = false;
         }
 
@@ -283,17 +290,42 @@ namespace painters {
 
     class p_image_component: public p_component_obj, public QGraphicsPixmapItem {
     public:
+        p_image_component(const std::string &name= "image"):
+            p_component_obj(p_component_type::Image, name),
+            QGraphicsPixmapItem(nullptr),
+            m_alpha_channel(255) {
+            __init__();
+        }
         p_image_component(const std::string &file_path, const std::string &name= "image"):
             p_component_obj(p_component_type::Image, name),
             QGraphicsPixmapItem(nullptr),
             m_alpha_channel(255),
             m_file_path(file_path){
-
+            m_pixmap.load(file_path.c_str());
+            setPixmap(m_pixmap);
+            this->update();
+            __init__();
         }
+
+        void load_image(const std::string &file_name) {
+            m_pixmap.load(file_name.c_str());
+            setPixmap(m_pixmap);
+            this->update();
+        }
+
+    private:
+        void __init__();
+
+    OVERLOAD_EVENT:
+        OVERLOAD_FUNC;
+
+    EVENT_FROM_SCENE:
+        EVENT_FROM_SCENE_FUNC;
 
     private:
         uint32_t            m_alpha_channel;
         std::string         m_file_path;
+        QPixmap             m_pixmap;
     };
 
 }; //! namespace painters

@@ -1,3 +1,9 @@
+/*!
+ * @author  chenghua.wang
+ * @brief override the view, provide the movable and
+ * scroable canvas.
+ */
+
 #ifndef P_GRAPHICVIEWPORT_H
 #define P_GRAPHICVIEWPORT_H
 
@@ -11,6 +17,7 @@
 namespace painters {
 
     class p_graphic_view: public QGraphicsView {
+        Q_OBJECT
     public:
         p_graphic_view(QWidget *parent= nullptr):
             QGraphicsView(parent) {
@@ -31,7 +38,6 @@ namespace painters {
         void zoom_in();
         void zoom_out();
         void transform_m(QPointF rhs);
-
 
     public: ///< for flags
         bool        m_transform_enable = false;

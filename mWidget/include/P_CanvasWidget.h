@@ -24,19 +24,23 @@
 #include "core_base.h"
 
 #include "P_component.h"
+#include "P_layer_manage.h"
+
 #include <QGraphicsScene>
 
 ///< TODO add brush counter.
-#define MOUSE_EVENT_PRESS(object_ptr, object_type) \
+#define MOUSE_EVENT_PRESS(object_ptr, object_type, other_sentence) \
     if (event->button() == Qt::LeftButton && \
             event->modifiers() != Qt::AltModifier && \
             event->modifiers() != Qt::ShiftModifier) { \
         if (_a.x() < 0 || _a.x() > m_scene_size.width()) break; \
         if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
         object_ptr##_enable = true; \
-        object_ptr = new object_type(); \
+        object_ptr = new object_type(__combine_name__(object_ptr##_cnt)); \
+        other_sentence;\
         object_ptr->press_event_from_scene(_a); \
         addItem(object_ptr); \
+        m_cur_choosed_layer->add_node(object_ptr->get_name(), object_ptr); \
     } \
 
 #define MOUSE_EVENT_MOVE(object_ptr) \
@@ -53,6 +57,8 @@
         if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
         object_ptr->release_event_from_scene(_a); \
         object_ptr = nullptr; \
+        signal_update_layer_tree(); \
+        emit signal_update_layer_tree(); \
     } \
 
 namespace painters {
@@ -75,6 +81,7 @@ namespace painters {
      * @brief TODO scorrled.
      */
     class p_canvas: public QGraphicsScene {
+        Q_OBJECT
     public:
         p_canvas() {
             setBackgroundBrush(Qt::white);
@@ -88,6 +95,32 @@ namespace painters {
             m_rectItem->setPen(pen);
             m_rectItem->setBrush(QBrush(QColor(255, 255, 255)));
             addItem(m_rectItem);
+
+            // layer manager. Init the first layer.
+            m_cur_choosed_layer = CREATE_REF(p_graphic_layer)("untitled layer 1");
+            m_cur_choosed_layer->set_zbuffer(0);
+            m_layer_stack.push_layer(m_cur_choosed_layer);
+        }
+
+    private:
+        std::string __combine_name__(uint32_t &a) {
+            switch (m_cur_tool) {
+            case tool_type::Circle:
+                return "Circle " + std::to_string(++a);
+                break;
+            case tool_type::Image:
+                return "Image " + std::to_string(++a);
+                break;
+            case tool_type::Pen:
+                return "Pen " + std::to_string(++a);
+                break;
+            case tool_type::Rect:
+                return "Rect " + std::to_string(++a);
+                break;
+            default:
+                break;
+            }
+            return "None " + std::to_string(++a);
         }
 
     protected: ///< overide original virtual functions.
@@ -96,13 +129,53 @@ namespace painters {
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
     public: ///< Interface to other class.
+        void set_tool_type(tool_type a) { m_cur_tool = a; }
+        tool_type get_tool_type() { return m_cur_tool; }
+        bool get_cur_brush_enable() { return m_cur_brush_enable; }
+        bool get_rect_brush_enable() { return m_cur_rect_enable; }
+        bool get_circle_brush_enable() { return m_cur_circle_enable; }
+        bool get_cur_image_enable() { return m_cur_image_enable; }
 
+        p_brush_component *get_brush_component() { return m_cur_brush; }
+        p_rect_component *get_rect_component() { return m_cur_rect; }
+        p_circle_component *get_circle_component() { return m_cur_circle; }
+        p_image_component *get_image_component() { return m_cur_image; }
+
+        const std::string get_cur_image_string() { return m_cur_image_string; }
+        void set_cur_image_string(const std::string &_a) { m_cur_image_string = _a; }
+
+        void add_layer(const std::string &_a= "") {
+            std::string tmp = _a;
+            if (_a == ""){
+                tmp = "Layer " + std::to_string(++m_cur_layer_cnt);
+            }
+            m_cur_choosed_layer = CREATE_REF(p_graphic_layer)(tmp);
+            m_layer_stack.push_layer(m_cur_choosed_layer);
+        }
+        void delete_layer(REF(p_graphic_layer) &_a) {
+            m_layer_stack.pop_layer(_a);
+        }
+        void rename_layer(const std::string &_a) {
+            m_cur_choosed_layer->rename(_a);
+        }
+
+    signals:
+        void signal_update_layer_tree();
+
+    public slots:
+        void slots_brush_pen_changed(QPen &_a);
 
     private: ///< numerous flags setting.
-        tool_type           m_cur_tool = tool_type::Circle;
+        tool_type           m_cur_tool = tool_type::Pen;
         bool                m_cur_brush_enable = false;
         bool                m_cur_rect_enable = false;
         bool                m_cur_circle_enable = false;
+        bool                m_cur_image_enable = false;
+
+    private:
+        QPen                m_cur_brush_pen;
+        QPen                m_cur_rect_pen;
+        QPen                m_cur_circle_pen;
 
     private: ///< scene global data
         QSize               m_scene_size = QSize(1024, 720);
@@ -111,6 +184,20 @@ namespace painters {
         p_brush_component   *m_cur_brush = nullptr;
         p_rect_component    *m_cur_rect = nullptr;
         p_circle_component  *m_cur_circle =  nullptr;
+        p_image_component   *m_cur_image = nullptr;
+        std::string         m_cur_image_string;
+
+    private: ///< num of every component.
+        uint32_t            m_cur_brush_cnt = 0;
+        uint32_t            m_cur_rect_cnt = 0;
+        uint32_t            m_cur_circle_cnt = 0;
+        uint32_t            m_cur_image_cnt = 0;
+        uint32_t            m_cur_none_cnt = 0;
+        uint32_t            m_cur_layer_cnt = 0;
+
+    public: /// Layer manager
+        REF(p_graphic_layer)    m_cur_choosed_layer;
+        p_graphic_layer_stack   m_layer_stack;
     };
 
 }
