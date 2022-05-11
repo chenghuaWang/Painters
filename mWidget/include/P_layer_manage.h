@@ -22,23 +22,60 @@ namespace painters {
 
     class p_graphic_layer {
     public:
+        p_graphic_layer(const std::string &name):
+            m_visible(true),
+            m_layer_name(name){
+            m_layer_zbuffer = -1;
+        };
+
+        int32_t get_zbuffer() { return m_layer_zbuffer; }
+        void set_zbuffer(int32_t _a) { m_layer_zbuffer = _a; }
+
+        bool get_visible() { return m_visible; }
+        void set_visible(bool enable) { m_visible = enable; }
+
+        void add_node(const std::string &name, QGraphicsItem* item_ptr ) {
+            m_nodes[name] = REF(QGraphicsItem)(item_ptr);
+        }
+
+        void rename(const std::string &name) { m_layer_name = name; }
+        const std::string &get_name() { return m_layer_name; }
+
+        std::map<std::string, REF(QGraphicsItem)> &get_nodes() { return m_nodes; }
 
     private:
-        bool                    m_alpha_enable; ///< the alpha enable flag.
-        bool                    m_visible; ///< the visible of this layer.
-        uint32_t                m_id; ///< I defined layer system as a state machine.
-        float                   m_alpha_rate;
-        REF(QGraphicsScene)     m_scene;
+        bool                                        m_visible;
+        int32_t                                     m_layer_zbuffer;
+        std::string                                 m_layer_name;
+        std::map<std::string, REF(QGraphicsItem)>   m_nodes;
     };
 
     class p_graphic_layer_stack {
     public:
+        p_graphic_layer_stack() {}
 
+        void push_layer(REF(p_graphic_layer) &_a) {
+            m_layer_stack.push_back(_a);
+        }
 
+        void pop_layer(REF(p_graphic_layer) &_a) {
+            std::vector<REF(p_graphic_layer)>::iterator result = find(m_layer_stack.begin( ), m_layer_stack.end( ), _a);
+            if (result != end()) {
+                m_layer_stack.erase(result);
+            }
+        }
+
+        size_t get_size() { return m_layer_stack.size(); }
+
+    public:
+        ///< Make this class works like a vector;
+        std::vector<REF(p_graphic_layer)>::iterator begin() { return m_layer_stack.begin(); }
+        std::vector<REF(p_graphic_layer)>::iterator end() { return m_layer_stack.end(); }
+        const std::vector<REF(p_graphic_layer)>::const_iterator begin_const() { return m_layer_stack.begin(); }
+        const std::vector<REF(p_graphic_layer)>::const_iterator end_const() { return m_layer_stack.end(); }
 
     private:
-        REF(p_graphic_layer)                m_current_layer; ///< record the current choosed layer
-        std::vector<REF(p_graphic_layer)>   m_stack;
+        std::vector<REF(p_graphic_layer)>     m_layer_stack;
     };
 
 } //! namespace painters
