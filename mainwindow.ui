@@ -35,7 +35,7 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -350,7 +350,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox_2"/>
+               <widget class="QComboBox" name="comboBox_brush_type"/>
               </item>
              </layout>
             </item>
@@ -364,7 +364,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+               <widget class="QDoubleSpinBox" name="doubleSpinBox_brush_thickness"/>
               </item>
              </layout>
             </item>
@@ -387,7 +387,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSlider" name="horizontalSlider_4">
+               <widget class="QSlider" name="horizontalSlider_brush_r">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -405,7 +405,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSlider" name="horizontalSlider_5">
+               <widget class="QSlider" name="horizontalSlider_brush_g">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -423,7 +423,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSlider" name="horizontalSlider_6">
+               <widget class="QSlider" name="horizontalSlider_brush_b">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -432,7 +432,25 @@
              </layout>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_4">
+             <layout class="QHBoxLayout" name="horizontalLayout_26">
+              <item>
+               <widget class="QLabel" name="label_28">
+                <property name="text">
+                 <string>Alpha</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSlider" name="horizontalSlider_brush_a">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_brush_color">
               <property name="text">
                <string>choose colour</string>
               </property>
@@ -448,7 +466,7 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0">
-             <widget class="QGraphicsView" name="graphicsView_3"/>
+             <widget class="QGraphicsView" name="graphicsView_brush"/>
             </item>
            </layout>
           </widget>
