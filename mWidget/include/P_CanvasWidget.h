@@ -109,6 +109,11 @@ namespace painters {
             m_layer_stack.push_layer(m_cur_choosed_layer);
         }
 
+        ~p_canvas() {
+            delete m_reference_line;
+            delete m_reference_line_v;
+        }
+
     private:
         std::string __combine_name__(uint32_t &a) {
             switch (m_cur_tool) {
@@ -178,6 +183,15 @@ namespace painters {
         void slots_delete_refernce_line();
         void slots_lock_cur_layer(bool enable);
 
+        void slots_set_tool_type_shape(bool enable);
+        void slots_set_tool_type_pen(bool enable);
+        void slots_set_tool_type_image(bool enable);
+
+        void slots_shape_brush_changed(QBrush &_a);
+        void slots_shape_pen_changed(QPen &_a);
+
+        void slots_image_string_changed(const QString &_a);
+
     private: ///< numerous flags setting.
         tool_type           m_cur_tool = tool_type::Pen;
         bool                m_cur_brush_enable = false;
@@ -189,6 +203,8 @@ namespace painters {
         QPen                m_cur_brush_pen;
         QPen                m_cur_rect_pen;
         QPen                m_cur_circle_pen;
+        QBrush              m_cur_rect_brush;
+        QBrush              m_cur_circle_brush;
 
     private: ///< scene global data
         QSize               m_scene_size = QSize(1024, 720);

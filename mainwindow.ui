@@ -110,19 +110,37 @@
             <property name="text">
              <string/>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QToolButton" name="toolButton_2">
+           <widget class="QToolButton" name="toolButton_shape">
             <property name="text">
-             <string>...</string>
+             <string/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QToolButton" name="toolButton_3">
+           <widget class="QToolButton" name="toolButton_image">
             <property name="text">
-             <string>...</string>
+             <string/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -330,7 +348,7 @@
      <item row="0" column="0">
       <widget class="QTabWidget" name="tabWidget_2">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -700,7 +718,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox_3"/>
+            <widget class="QComboBox" name="comboBox_shape"/>
            </item>
           </layout>
          </item>
@@ -714,7 +732,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_shape_thick"/>
            </item>
           </layout>
          </item>
@@ -728,7 +746,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="pushButton_shape_pen_color">
              <property name="text">
               <string>Choose</string>
              </property>
@@ -741,16 +759,30 @@
            <item>
             <widget class="QLabel" name="label_17">
              <property name="text">
-              <string>Inner colour</string>
+              <string>Inner Colour</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_3">
+            <widget class="QPushButton" name="pushButton_shape_brush_color">
              <property name="text">
               <string>Choose</string>
              </property>
             </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_29">
+           <item>
+            <widget class="QLabel" name="label_31">
+             <property name="text">
+              <string>Brush Type:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox_brush_type_2"/>
            </item>
           </layout>
          </item>
@@ -796,7 +828,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_6"/>
+            <widget class="QLineEdit" name="lineEdit_image_path"/>
            </item>
           </layout>
          </item>
@@ -810,7 +842,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_7"/>
+            <widget class="QLineEdit" name="lineEdit_image_name"/>
            </item>
           </layout>
          </item>
@@ -824,9 +856,16 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEdit_8"/>
+            <widget class="QLineEdit" name="lineEdit_image_size"/>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_image_add_button">
+           <property name="text">
+            <string>Add Image</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QGroupBox" name="groupBox_12">

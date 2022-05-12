@@ -1,5 +1,6 @@
 #include "p_inspector.h"
 #include <QColorDialog>
+#include <QFileDialog>
 
 namespace painters {
 
@@ -157,3 +158,87 @@ void p_layer_inspector::slots_update_layer_widget(REF(p_graphic_layer)& _a) {
 }
 
 }; //namespace painters
+
+namespace painters {
+
+void p_shape_inspector::__init__() {
+    m_brush.setStyle(Qt::SolidPattern);
+    m_shape_combobox->addItem("Rect");
+    m_shape_combobox->addItem("Circle");
+    m_brush_type_combobox->addItem("SolidPattern");
+    m_brush_type_combobox->addItem("CrossPattern");
+
+    a.setRect(QRectF(0, 0, 100, 100));
+    a.setPen(m_pen);
+    a.setBrush(m_brush);
+
+    m_view->setBackgroundBrush(Qt::white);
+    m_view->setScene(m_scene.get());
+    m_scene->addItem(&a);
+
+    connect(this->m_pen_color_pushbutton.get(), SIGNAL(clicked(bool)), this, SLOT(slots_pen_color_choose(bool)));
+    connect(this->m_brush_color_pushbutton.get(), SIGNAL(clicked(bool)), this, SLOT(slots_brush_color_choose(bool)));
+    connect(this->m_thickness_spinbox.get(), SIGNAL(valueChanged(qreal)), this, SLOT(slots_thickness_get(qreal)));
+    connect(this->m_brush_type_combobox.get(), SIGNAL(currentTextChanged(const QString&)), this, SLOT(slots_brush_style(const QString&)));
+}
+
+void p_shape_inspector::__redraw__() {
+    a.setPen(m_pen);
+    a.setBrush(m_brush);
+    m_scene->update();
+}
+
+void p_shape_inspector::slots_pen_color_choose(bool) {
+    QColor m_color = QColorDialog::getColor(Qt::white, this, "Color Dialog", QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
+    m_pen.setColor(m_color);
+    __redraw__();
+    emit signal_pen_changed(m_pen);
+}
+
+void p_shape_inspector::slots_brush_color_choose(bool) {
+    QColor m_color = QColorDialog::getColor(Qt::white, this, "Color Dialog", QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog	);
+    m_brush.setColor(m_color);
+    __redraw__();
+    emit signal_brush_changed(m_brush);
+}
+
+void p_shape_inspector::slots_thickness_get(qreal _a) {
+    m_pen.setWidthF(_a);
+    __redraw__();
+    emit signal_pen_changed(m_pen);
+}
+
+void p_shape_inspector::slots_brush_style(const QString &_a) {
+    if (_a == "SolidPattern") {
+        m_brush.setStyle(Qt::SolidPattern);
+    }
+    else if (_a == "CrossPattern") {
+        m_brush.setStyle(Qt::CrossPattern);
+    }
+    __redraw__();
+    emit signal_brush_changed(m_brush);
+}
+} // namespace painters;
+
+namespace painters {
+
+void p_image_inspector::__init__() {
+    m_view->setBackgroundBrush(Qt::white);
+    m_view->setScene(m_scene.get());
+
+    connect(this->m_image_get_pushbutton.get(), SIGNAL(clicked()), this, SLOT(slots_get_button()));
+}
+
+void p_image_inspector::__redraw__() {
+
+}
+
+void p_image_inspector::slots_get_button() {
+    m_path_name = QFileDialog::getOpenFileName(this, "choose file name and directory", "C:/Users/Administrator/Desktop", "*.png *.xpm *.jpg");
+    if (m_path_name.isEmpty()) return;
+    m_image_path_editor->setText(m_path_name);
+    m_image_name_editor->setText(m_path_name);
+    emit signal_image_update(m_path_name);
+}
+
+}

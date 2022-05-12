@@ -26,9 +26,20 @@ public slots:
     void slots_tree_node_update();
     void slots_export_files(bool enable);
 
+    void slots_change_table_to_pen(bool enable);
+    void slots_change_table_to_shape(bool enable);
+    void slots_change_table_to_image(bool enable);
+
+    void slots_change_shape_to_rect();
+    void slots_change_shape_to_circle();
+
+    void slots_change_shape_type(const QString& _a);
+
 private:
     painters::p_brush_inspector     m_brush_inspector;
     painters::p_layer_inspector     m_layer_inspector;
+    painters::p_shape_inspector     m_shape_inspector;
+    painters::p_image_inspector     m_image_inspector;
 
 private:
     painters::p_graphic_view *gv = new painters::p_graphic_view();

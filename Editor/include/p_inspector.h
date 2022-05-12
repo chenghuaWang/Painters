@@ -141,14 +141,6 @@ namespace painters {
 
     };
 
-    class p_image_inspector: public p_inspector {
-
-    };
-
-    class p_shape_inspector: public p_inspector {
-
-    };
-
 } //! namespace painters
 
 namespace painters {
@@ -177,5 +169,85 @@ namespace painters {
     };
 
 } //! namespace painters.
+
+namespace painters {
+
+    class p_shape_inspector: public p_inspector {
+        Q_OBJECT
+    public:
+        p_shape_inspector(const std::string &name= "shape inspector"): p_inspector(name) {
+            m_scene = CREATE_REF(QGraphicsScene)();
+        };
+
+        REGISTER_FUNC(shape_combobox, QComboBox);
+        REGISTER_FUNC(brush_type_combobox, QComboBox);
+        REGISTER_FUNC(pen_color_pushbutton, QPushButton);
+        REGISTER_FUNC(brush_color_pushbutton, QPushButton);
+        REGISTER_FUNC(thickness_spinbox, QDoubleSpinBox);
+        REGISTER_FUNC(scene, QGraphicsScene);
+        REGISTER_FUNC(view, QGraphicsView);
+
+        REF(QComboBox)      m_shape_combobox;
+        REF(QComboBox)      m_brush_type_combobox;
+        REF(QPushButton)    m_pen_color_pushbutton;
+        REF(QPushButton)    m_brush_color_pushbutton;
+        REF(QDoubleSpinBox) m_thickness_spinbox;
+        REF(QGraphicsScene) m_scene;
+        REF(QGraphicsView)  m_view;
+
+        void __init__();
+        void __redraw__();
+
+    signals:
+        void signal_pen_changed(QPen &);
+        void signal_brush_changed(QBrush &);
+
+    public slots:
+        void slots_pen_color_choose(bool);
+        void slots_brush_color_choose(bool);
+        void slots_thickness_get(qreal _a);
+        void slots_brush_style(const QString &_a);
+
+    private:
+        QBrush      m_brush;
+        QPen        m_pen;
+        QGraphicsRectItem a;
+        QGraphicsEllipseItem b;
+    };
+}; // !namespace painters;
+
+namespace painters {
+    class p_image_inspector: public p_inspector {
+        Q_OBJECT;
+    public:
+        p_image_inspector(const std::string &name= "image inspector"): p_inspector(name) {};
+
+        REGISTER_FUNC(image_path_editor, QLineEdit);
+        REGISTER_FUNC(image_name_editor, QLineEdit);
+        REGISTER_FUNC(image_size_editor, QLineEdit);
+        REGISTER_FUNC(image_get_pushbutton, QPushButton);
+        REGISTER_FUNC(scene, QGraphicsScene);
+        REGISTER_FUNC(view, QGraphicsView);
+
+        REF(QLineEdit)  m_image_path_editor;
+        REF(QLineEdit)  m_image_name_editor;
+        REF(QLineEdit)  m_image_size_editor;
+        REF(QPushButton)    m_image_get_pushbutton;
+        REF(QGraphicsScene) m_scene;
+        REF(QGraphicsView)  m_view;
+
+        void __init__();
+        void __redraw__();
+
+    public slots:
+        void slots_get_button();
+
+    signals:
+        void signal_image_update(const QString &);
+
+    private:
+        QString m_path_name;
+    };
+}
 
 #endif // P_INSPECTOR_H

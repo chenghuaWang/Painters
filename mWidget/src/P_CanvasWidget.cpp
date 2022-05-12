@@ -11,10 +11,10 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         MOUSE_EVENT_PRESS(m_cur_brush, p_brush_component, m_cur_brush->set_pen(m_cur_brush_pen));
         break;
     case tool_type::Rect:
-        MOUSE_EVENT_PRESS(m_cur_rect, p_rect_component, ;);
+        MOUSE_EVENT_PRESS(m_cur_rect, p_rect_component, (m_cur_rect->set_brush(m_cur_rect_brush), m_cur_rect->set_pen(m_cur_rect_pen)));
         break;
     case tool_type::Circle:
-        MOUSE_EVENT_PRESS(m_cur_circle, p_circle_component, ;);
+        MOUSE_EVENT_PRESS(m_cur_circle, p_circle_component, (m_cur_circle->set_brush(m_cur_circle_brush), m_cur_circle->set_pen(m_cur_circle_pen)));
         break;
     case tool_type::Image:
         if (event->button() == Qt::LeftButton &&
@@ -23,7 +23,7 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             if (_a.x() < 0 || _a.x() > m_scene_size.width()) break;
             if (_a.y() < 0 || _a.y() > m_scene_size.height()) break;
             m_cur_image_enable = true;
-            m_cur_image_string = "D:/Imgs/ke.jpg";
+//            m_cur_image_string = "D:/Imgs/ke.jpg";
             m_cur_image = new p_image_component(m_cur_image_string, __combine_name__(m_cur_image_cnt));
             m_cur_image->press_event_from_scene(_a);
             addItem(m_cur_image);
@@ -152,19 +152,35 @@ void p_canvas::slots_draw_reference_line() {
     m_reference_line = new QGraphicsPathItem();
     m_reference_line->setPath(tmp);
     m_reference_line->setPen(qpen);
-    addItem(m_reference_line);
+//    addItem(m_reference_line);
 
     m_reference_line_v = new QGraphicsPathItem();
     m_reference_line_v->setPath(tmp2);
     m_reference_line_v->setPen(qpen);
-    addItem(m_reference_line_v);
+//    addItem(m_reference_line_v);
+    QBrush m_brush;
+    m_brush.setColor(QColor(0, 0, 0, 64));
+    m_brush.setStyle(Qt::BrushStyle::CrossPattern);
+
+    m_rectItem->setBrush(m_brush);
+    this->update();
 }
 
 void p_canvas::slots_delete_refernce_line() {
     if (m_reference_line != nullptr) {
-        removeItem(m_reference_line);
-        removeItem(m_reference_line_v);
+//        removeItem(m_reference_line);
+//        removeItem(m_reference_line_v);
+        delete m_reference_line;
+        delete m_reference_line_v;
+        m_reference_line = nullptr;
+        m_reference_line_v = nullptr;
     }
+    QBrush m_brush;
+    m_brush.setColor(QColor(0, 0, 0, 64));
+    m_brush.setStyle(Qt::BrushStyle::NoBrush);
+
+    m_rectItem->setBrush(m_brush);
+    this->update();
 }
 
 void p_canvas::slots_process_reference(const QString& _a) {
@@ -178,6 +194,32 @@ void p_canvas::slots_process_reference(const QString& _a) {
 
 void p_canvas::slots_lock_cur_layer(bool enable) {
     m_cur_choosed_layer->m_locked = enable;
+}
+
+void p_canvas::slots_set_tool_type_shape(bool enable) {
+    m_cur_tool = tool_type::Rect;
+}
+
+void p_canvas::slots_set_tool_type_pen(bool enable) {
+    m_cur_tool = tool_type::Pen;
+}
+
+void p_canvas::slots_set_tool_type_image(bool enable) {
+    m_cur_tool = tool_type::Image;
+}
+
+void p_canvas::slots_shape_brush_changed(QBrush &_a) {
+    m_cur_rect_brush = _a;
+    m_cur_circle_brush = _a;
+}
+
+void p_canvas::slots_shape_pen_changed(QPen &_a) {
+    m_cur_rect_pen = _a;
+    m_cur_circle_pen = _a;
+}
+
+void p_canvas::slots_image_string_changed(const QString &_a) {
+    m_cur_image_string = _a.toStdString();
 }
 
 }

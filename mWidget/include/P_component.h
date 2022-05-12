@@ -26,6 +26,8 @@
         if (event->modifiers() == Qt::AltModifier && isSelected()) { \
             QGraphicsItem::mouseMoveEvent(event); \
         } \
+        else if (event->modifiers() == Qt::ControlModifier && isSelected() && m_resize) { \
+        } \
     } \
     void name::mousePressEvent(QGraphicsSceneMouseEvent *event) {\
         if (event->button() == Qt::LeftButton) {\
@@ -34,6 +36,8 @@
             }\
             else if (event->modifiers() == Qt::ShiftModifier) {\
             } \
+            else if (event->modifiers() == Qt::ControlModifier) { \
+            }\
         } \
         else { \
             event->ignore(); \
@@ -77,6 +81,8 @@ namespace painters {
         void set_name(const std::string &rhs) { m_debug_name = rhs; }
         p_component_type get_type() { return m_type; }
         const std::string &get_name() { return m_debug_name; }
+
+        bool                m_resize = false;
 
     private:
         p_component_type    m_type;
@@ -198,6 +204,9 @@ namespace painters {
             setPen(m_pen_out);
         }
 
+        void set_brush(QBrush &_a) { setBrush(_a); }
+        void set_pen(QPen &_a) { setPen(_a); }
+
         const QBrush &get_brush_const() { return m_brush; }
         const QPen &get_pen_out_const() { return m_pen_out; }
         QBrush &get_brush() { return m_brush; }
@@ -236,6 +245,9 @@ namespace painters {
         }
 
         void __init__();
+
+        void set_brush(QBrush &_a) { setBrush(_a); }
+        void set_pen(QPen &_a) { setPen(_a); }
 
     OVERLOAD_EVENT:
         OVERLOAD_FUNC;
