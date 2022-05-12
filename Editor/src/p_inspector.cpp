@@ -8,6 +8,8 @@ void p_brush_inspector::__init__() {
     m_g_slider->setValue(m_color.green());
     m_b_slider->setValue(m_color.blue());
     m_a_slider->setValue(m_color.alpha());
+    m_brush_type_combobox->setCurrentIndex(0);
+    m_brush_thickness_spinbox->setValue(m_pen.widthF());
 
     QPainterPath tmp;
 
@@ -32,6 +34,17 @@ void p_brush_inspector::__init__() {
     m_brush_type_combobox->addItem("DotLine");
     m_brush_type_combobox->addItem("DashLine");
 
+    m_brush_cap_combobox->addItem("FlatCap");
+    m_brush_cap_combobox->addItem("RoundCap");
+    m_brush_cap_combobox->addItem("SquareCap");
+    m_brush_cap_combobox->addItem("MPenCapStyle");
+
+    m_brush_join_combobox->addItem("BevelJoin");
+    m_brush_join_combobox->addItem("MPenJoinStyle");
+    m_brush_join_combobox->addItem("MiterJoin");
+    m_brush_join_combobox->addItem("RoundJoin");
+    m_brush_join_combobox->addItem("SvgMiterJoin");
+
     // init slider
     m_r_slider->setMaximum(255);
     m_r_slider->setMinimum(0);
@@ -54,6 +67,8 @@ void p_brush_inspector::__init__() {
     connect(this->m_a_slider.get(), SIGNAL(valueChanged(int)), this, SLOT(slots_change_slider_a(int))); ///< slider a
     connect(this->m_brush_thickness_spinbox.get(), SIGNAL(valueChanged(qreal)), this, SLOT(slots_change_doublespin_box(qreal)));
     connect(this->m_brush_type_combobox.get(), SIGNAL(currentTextChanged(const QString&)), this, SLOT(slots_change_combobox_style(const QString&)));
+    connect(this->m_brush_cap_combobox.get(), SIGNAL(currentTextChanged(const QString&)), this, SLOT(slots_change_combobox_cap_style(const QString&)));
+    connect(this->m_brush_join_combobox.get(), SIGNAL(currentTextChanged(const QString&)), this, SLOT(slots_change_combobox_join_style(const QString&)));
 
     // below for init emit
     emit signal_pen_changed(m_pen);
@@ -112,4 +127,33 @@ void p_brush_inspector::slots_change_combobox_style(const QString& _a) {
     emit signal_pen_changed(m_pen);
 }
 
+void p_brush_inspector::slots_change_combobox_cap_style(const QString& _a) {
+    m_pen.setCapStyle(map_to_cap_type(_a));
+    __redraw__();
+    emit signal_pen_changed(m_pen);
+}
+
+void p_brush_inspector::slots_change_combobox_join_style(const QString& _a) {
+    m_pen.setJoinStyle(map_to_join_type(_a));
+    __redraw__();
+    emit signal_pen_changed(m_pen);
+}
+
 }; //! namespace painters;
+
+namespace painters {
+
+void p_layer_inspector::__init__() {
+    m_alpha_spinbox->setMaximum(1.0);
+    m_alpha_spinbox->setMinimum(0.0);
+    m_alpha_enable_checkbox->setChecked(true);
+    m_lock_checkbox->setChecked(false);
+}
+
+void p_layer_inspector::slots_update_layer_widget(REF(p_graphic_layer)& _a) {
+    m_name_editor->setText(_a->get_name().c_str());
+    QString tmp(std::string(std::to_string(_a->get_w()) + " x " + std::to_string(_a->get_h())).c_str());
+    m_size_editor->setText(tmp);
+}
+
+}; //namespace painters

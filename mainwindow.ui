@@ -87,7 +87,10 @@
          <property name="title">
           <string>Tool Box</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
+         <layout class="QGridLayout" name="gridLayout_3" rowstretch="1,1" columnstretch="1,1,1,1,1" columnminimumwidth="0,0,0,0,0">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
           <item row="0" column="4">
            <widget class="QToolButton" name="toolButton_5">
             <property name="text">
@@ -103,9 +106,9 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QToolButton" name="toolButton">
+           <widget class="QToolButton" name="toolButton_pen">
             <property name="text">
-             <string>...</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -181,7 +184,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit">
+             <widget class="QLineEdit" name="lineEdit_layer_name">
               <property name="text">
                <string>None</string>
               </property>
@@ -199,19 +202,19 @@
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit_2"/>
+             <widget class="QLineEdit" name="lineEdit_layer_size"/>
             </item>
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox_2">
+           <widget class="QCheckBox" name="checkBox_layer_lock">
             <property name="text">
              <string>Layer Locked</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="checkBox_layer_alpha">
             <property name="text">
              <string>Alpha Enable</string>
             </property>
@@ -227,7 +230,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_alpha_value"/>
             </item>
            </layout>
           </item>
@@ -292,7 +295,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox"/>
+           <widget class="QComboBox" name="comboBox_reference"/>
           </item>
          </layout>
         </item>
@@ -331,13 +334,13 @@
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
-         <string>Brush</string>
+         <string>Pen</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_16">
          <item>
           <widget class="QGroupBox" name="groupBox_9">
            <property name="title">
-            <string>Brush attributes</string>
+            <string>Pen attributes</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_14">
             <item>
@@ -345,7 +348,7 @@
               <item>
                <widget class="QLabel" name="label_18">
                 <property name="text">
-                 <string>Brush Type:</string>
+                 <string>Pen Type:</string>
                 </property>
                </widget>
               </item>
@@ -355,11 +358,39 @@
              </layout>
             </item>
             <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_27">
+              <item>
+               <widget class="QLabel" name="label_29">
+                <property name="text">
+                 <string>Pen Cap style:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_pen_cap_style"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_28">
+              <item>
+               <widget class="QLabel" name="label_30">
+                <property name="text">
+                 <string>Pen Join Style:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_pen_join_style"/>
+              </item>
+             </layout>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_17">
               <item>
                <widget class="QLabel" name="label_19">
                 <property name="text">
-                 <string>Brush Thickness:</string>
+                 <string>Pen Thickness:</string>
                 </property>
                </widget>
               </item>
@@ -374,7 +405,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_10">
            <property name="title">
-            <string>Brush Colour</string>
+            <string>Pen Colour</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_15">
             <item>

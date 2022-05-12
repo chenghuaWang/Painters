@@ -28,7 +28,7 @@ set(PROJECT_SOURCES
         mainwindow.ui
         ${TS_FILES}
         theme/style.qrc
-
+        icon_bind.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

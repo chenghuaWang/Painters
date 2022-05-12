@@ -21,6 +21,9 @@ namespace painters {
     public:
         p_graphic_view(QWidget *parent= nullptr):
             QGraphicsView(parent) {
+            setViewport(new QWidget);
+            setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+
             setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             centerOn(0, 0);

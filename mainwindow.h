@@ -6,8 +6,9 @@
 #include <QTreeWidget>
 #include "P_GraphicViewport.h"
 #include "P_CanvasWidget.h"
-
+#include "core_base.h"
 #include "p_inspector.h"
+#include "P_layer_manage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,9 +24,11 @@ public:
 
 public slots:
     void slots_tree_node_update();
+    void slots_export_files(bool enable);
 
 private:
     painters::p_brush_inspector     m_brush_inspector;
+    painters::p_layer_inspector     m_layer_inspector;
 
 private:
     painters::p_graphic_view *gv = new painters::p_graphic_view();

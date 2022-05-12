@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/brush_paint_icon_193942.ico</file>
+        <file>icon/brush_paint_icon_193942.png</file>
+        <file>icon/triangle-circle-shape-brand_icon-icons.com_59117.ico</file>
+        <file>icon/triangle-circle-shape-brand_icon-icons.com_59117.png</file>
+    </qresource>
+</RCC>

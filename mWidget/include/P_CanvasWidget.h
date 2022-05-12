@@ -27,6 +27,7 @@
 #include "P_layer_manage.h"
 
 #include <QGraphicsScene>
+#include <QMessageBox>
 
 ///< TODO add brush counter.
 #define MOUSE_EVENT_PRESS(object_ptr, object_type, other_sentence) \
@@ -35,6 +36,10 @@
             event->modifiers() != Qt::ShiftModifier) { \
         if (_a.x() < 0 || _a.x() > m_scene_size.width()) break; \
         if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
+        if (m_cur_choosed_layer->m_locked) { \
+            QMessageBox::critical(nullptr, "Layer is locked", "free the layer before draw!!!"); \
+            break; \
+        } \
         object_ptr##_enable = true; \
         object_ptr = new object_type(__combine_name__(object_ptr##_cnt)); \
         other_sentence;\
@@ -90,14 +95,16 @@ namespace painters {
             pen.setColor(QColor(0, 0, 0));
             pen.setStyle(Qt::PenStyle::DashDotLine);
             pen.setWidth(1);
-            QGraphicsRectItem *m_rectItem = new QGraphicsRectItem();
+            m_rectItem = new QGraphicsRectItem();
             m_rectItem->setRect(0, 0, 1024, 720);
             m_rectItem->setPen(pen);
             m_rectItem->setBrush(QBrush(QColor(255, 255, 255)));
             addItem(m_rectItem);
 
             // layer manager. Init the first layer.
-            m_cur_choosed_layer = CREATE_REF(p_graphic_layer)("untitled layer 1");
+            set_cur_choosed_layer(CREATE_REF(p_graphic_layer)("untitled layer 1"));
+            m_cur_choosed_layer->m_w = 1024;
+            m_cur_choosed_layer->m_h = 720;
             m_cur_choosed_layer->set_zbuffer(0);
             m_layer_stack.push_layer(m_cur_choosed_layer);
         }
@@ -159,11 +166,17 @@ namespace painters {
             m_cur_choosed_layer->rename(_a);
         }
 
+        void set_cur_choosed_layer(const REF(p_graphic_layer)& _a);
+
     signals:
         void signal_update_layer_tree();
 
     public slots:
         void slots_brush_pen_changed(QPen &_a);
+        void slots_process_reference(const QString& _a);
+        void slots_draw_reference_line();
+        void slots_delete_refernce_line();
+        void slots_lock_cur_layer(bool enable);
 
     private: ///< numerous flags setting.
         tool_type           m_cur_tool = tool_type::Pen;
@@ -194,6 +207,11 @@ namespace painters {
         uint32_t            m_cur_image_cnt = 0;
         uint32_t            m_cur_none_cnt = 0;
         uint32_t            m_cur_layer_cnt = 0;
+
+    public: ///< process reference line
+        QGraphicsPathItem   *m_reference_line = nullptr;
+        QGraphicsPathItem   *m_reference_line_v = nullptr;
+        QGraphicsRectItem   *m_rectItem = nullptr;
 
     public: /// Layer manager
         REF(p_graphic_layer)    m_cur_choosed_layer;

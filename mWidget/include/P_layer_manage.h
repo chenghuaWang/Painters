@@ -20,9 +20,10 @@
 
 namespace painters {
 
-    class p_graphic_layer {
+    class p_graphic_layer: QWidget {
+        Q_OBJECT
     public:
-        p_graphic_layer(const std::string &name):
+        p_graphic_layer(const std::string &name): //uint32_t w, uint32_t h
             m_visible(true),
             m_layer_name(name){
             m_layer_zbuffer = -1;
@@ -34,6 +35,9 @@ namespace painters {
         bool get_visible() { return m_visible; }
         void set_visible(bool enable) { m_visible = enable; }
 
+        uint32_t get_w() { return m_w; }
+        uint32_t get_h() { return m_h; }
+
         void add_node(const std::string &name, QGraphicsItem* item_ptr ) {
             m_nodes[name] = REF(QGraphicsItem)(item_ptr);
         }
@@ -42,6 +46,10 @@ namespace painters {
         const std::string &get_name() { return m_layer_name; }
 
         std::map<std::string, REF(QGraphicsItem)> &get_nodes() { return m_nodes; }
+
+    public:
+        uint32_t                                    m_w, m_h;
+        bool                                        m_locked = false;
 
     private:
         bool                                        m_visible;
