@@ -21,6 +21,7 @@
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; \
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override; \
 
+
 #define OVERLOAD_FUNC_IMPL(name) \
     void name::mouseMoveEvent(QGraphicsSceneMouseEvent *event) { \
         if (event->modifiers() == Qt::AltModifier && isSelected()) { \
@@ -46,6 +47,7 @@
     void name::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {\
         QGraphicsItem::mouseReleaseEvent(event); \
     }
+
 
 #define EVENT_FROM_SCENE public
 #define EVENT_FROM_SCENE_FUNC \
@@ -74,7 +76,10 @@ namespace painters {
      */
     class p_component_obj {
     public:
-        p_component_obj(p_component_type rhs): m_type(rhs) {};
+        p_component_obj(p_component_type rhs):
+            m_type(rhs) {
+        };
+
         p_component_obj(p_component_type rhs, const std::string &a): m_type(rhs), m_debug_name(std::move(a)) {};
         virtual ~p_component_obj() = default;
 
@@ -123,8 +128,6 @@ namespace painters {
 
         const QPen &get_pen_const() { return m_pen; }
         QPen &get_pen() { return m_pen; }
-
-
 
     EVENT_FROM_SCENE:
         EVENT_FROM_SCENE_FUNC;

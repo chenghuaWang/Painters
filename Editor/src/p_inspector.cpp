@@ -162,7 +162,8 @@ void p_layer_inspector::slots_update_layer_widget(REF(p_graphic_layer)& _a) {
 namespace painters {
 
 void p_shape_inspector::__init__() {
-    m_brush.setStyle(Qt::SolidPattern);
+//    m_brush.setStyle(Qt::SolidPattern);
+
     m_shape_combobox->addItem("Rect");
     m_shape_combobox->addItem("Circle");
     m_brush_type_combobox->addItem("SolidPattern");

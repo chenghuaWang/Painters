@@ -14,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent)
     // set icon
     ui->toolButton_pen->setIcon(QIcon(":/icon/brush_paint_icon_193942.ico"));
     ui->toolButton_shape->setIcon(QIcon(":/icon/triangle-circle-shape-brand_icon-icons.com_59117.ico"));
+    ui->toolButton_image->setIcon(QIcon(":/icon/icons8-image-64.png"));
+    ui->toolButton_select->setIcon(QIcon(":/icon/icons8-select-64.png"));
 
     // Signal and slots connection
     connect(&m_brush_inspector, SIGNAL(signal_pen_changed(QPen&)), &m_default_scene, SLOT(slots_brush_pen_changed(QPen&)));
@@ -85,6 +87,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_image_inspector.__init__();
 
     // init other inspector TODO.
+
+
+    // init the scene
+    m_default_scene.set_tool_type(painters::tool_type::None);
+    ui->tabWidget_2->setCurrentIndex(0);
 }
 
 void MainWindow::slots_tree_node_update() {

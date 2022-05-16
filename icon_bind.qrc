@@ -4,5 +4,10 @@
         <file>icon/brush_paint_icon_193942.png</file>
         <file>icon/triangle-circle-shape-brand_icon-icons.com_59117.ico</file>
         <file>icon/triangle-circle-shape-brand_icon-icons.com_59117.png</file>
+        <file>icon/icons8-close-96.png</file>
+        <file>icon/icons8-image-64.png</file>
+        <file>icon/icons8-resize-96.png</file>
+        <file>icon/icons8-rotate-left-96.png</file>
+        <file>icon/icons8-select-64.png</file>
     </qresource>
 </RCC>

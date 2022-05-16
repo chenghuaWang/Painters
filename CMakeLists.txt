@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS OpenGLWidgets)
 
 add_compile_definitions("VE_ROOT_DIR=${VE_ROOT_DIR}")
 
@@ -75,6 +76,7 @@ add_subdirectory(Core)
 add_subdirectory(mWidget)
 add_subdirectory(Editor)
 target_link_libraries(Painters PRIVATE Qt${QT_VERSION_MAJOR}::Widgets p_core p_m_widget p_editor)
+target_link_libraries(Painters PRIVATE Qt6::OpenGLWidgets)
 
 set_target_properties(Painters PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

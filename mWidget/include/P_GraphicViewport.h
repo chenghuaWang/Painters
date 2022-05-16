@@ -13,6 +13,7 @@
 
 #include "core_base.h"
 #include <QGraphicsView>
+#include <QOpenGLWidget>
 
 namespace painters {
 
@@ -21,7 +22,10 @@ namespace painters {
     public:
         p_graphic_view(QWidget *parent= nullptr):
             QGraphicsView(parent) {
-            setViewport(new QWidget);
+            ///< Use opengl vision 330. For accelerate.
+            setViewport(new QOpenGLWidget(this));
+
+            ///< If use cpu render mode. This anti-alisasing flags should be closed.
             setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
             setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

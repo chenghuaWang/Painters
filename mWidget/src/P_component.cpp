@@ -1,4 +1,6 @@
 #include "P_component.h"
+#include <QPainter>
+#include <QtMath>
 
 namespace painters {
 
