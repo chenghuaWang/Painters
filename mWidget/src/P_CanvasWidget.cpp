@@ -2,6 +2,12 @@
 
 namespace painters {
 
+p_canvas *p_canvas::m_s_instance = nullptr;
+
+p_canvas* p_canvas::get_instance() {
+    return m_s_instance;
+}
+
 void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF _a = event->scenePos();
     switch (m_cur_tool) {
@@ -38,7 +44,42 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         break;
     }
 
-    // broadcast this event to other component.
+    if (m_cur_tool == tool_type::Select) {
+        if (m_choosed_for_select == nullptr) {
+            QTransform transform;
+            m_choosed_for_select = this->itemAt(_a, transform);
+            m_choosed_for_select->setSelected(true);
+        }
+        else {
+            QRectF bound_rect = m_choosed_for_select->boundingRect();
+            QRectF _out_line_ = bound_rect.adjusted(-4, -4, 4, 4);
+            QPointF pos = event->pos();
+            QPointF scene_pos = event->scenePos();
+
+            if (cauculate_distance(scene_pos, m_choosed_for_select->mapToScene(_out_line_.topRight())) <= 16.0){
+                m_op_type = p_op_type::None;
+                m_cur_choosed_layer->delete_node(m_choosed_for_select);
+
+                this->removeItem(m_choosed_for_select);
+                m_choosed_for_select = nullptr;
+                this->update();
+
+                emit signal_update_layer_tree();
+            }
+            else if (cauculate_distance(scene_pos, m_choosed_for_select->mapToScene(_out_line_.bottomRight())) <= 16.0) {
+
+            }
+            else if (cauculate_distance(scene_pos, m_choosed_for_select->mapToScene(_out_line_.bottomLeft())) <= 16.0) {
+
+            } else {
+                m_choosed_for_select->setSelected(false);
+                QTransform transform;
+                m_choosed_for_select = this->itemAt(_a, transform);
+                m_choosed_for_select->setSelected(true);
+            }
+        }
+    }
+    // broadcast this event to other component. TODO
     QGraphicsScene::mousePressEvent(event);
 }
 
@@ -67,7 +108,7 @@ void p_canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         break;
     }
 
-    // broadcast this event to other component.
+    // broadcast this event to other component. TODO
     QGraphicsScene::mouseMoveEvent(event);
 }
 
@@ -96,8 +137,8 @@ void p_canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         break;
     }
 
-    // broadcast this event to other component.
-    QGraphicsScene::mouseMoveEvent(event);
+    // broadcast this event to other component. TODO
+    QGraphicsScene::mouseReleaseEvent(event);
 }
 
 } //! namespace painters

@@ -11,6 +11,7 @@
 #endif //! _MSC_VER
 
 #include "core_base.h"
+
 #include <QIcon>
 #include <QtMath>
 #include <QImage>
@@ -29,7 +30,7 @@
 
 #define OVERLOAD_FUNC_IMPL(name, base_class) \
     void name::mouseMoveEvent(QGraphicsSceneMouseEvent *event) { \
-        if (event->modifiers() == Qt::AltModifier && isSelected()) { \
+        if ((event->modifiers() == Qt::AltModifier && isSelected()) || (isSelected() && p_canvas::get_instance()->get_tool_type() == tool_type::Select)) { \
             QGraphicsItem::mouseMoveEvent(event); \
         } \
         else if (event->modifiers() == Qt::ControlModifier && isSelected() && m_resize) { \
@@ -107,7 +108,7 @@
 
 namespace painters {
     enum class p_op_type {
-        Noen = 0,
+        None = 0,
         Move,
         Resize,
         Rotate
@@ -193,6 +194,7 @@ namespace painters {
         const std::string &get_name() { return m_debug_name; }
 
         bool                m_resize = false;
+        bool                m_lazy_remove = false; ///< important!! for delate remove.!!!
 
     private:
         p_component_type    m_type;

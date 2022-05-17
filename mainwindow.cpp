@@ -107,7 +107,7 @@ void MainWindow::slots_tree_node_update() {
         top_item->setText(0, layer->get_name().c_str());
         ui->treeWidget->addTopLevelItem(top_item);
 
-        std::map<std::string, REF(QGraphicsItem)> &tmp_nodes = layer->get_nodes();
+        std::map<std::string, QGraphicsItem*> &tmp_nodes = layer->get_nodes();
 
         for (auto &node: tmp_nodes) {
             QStringList c;

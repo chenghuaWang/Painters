@@ -20,6 +20,9 @@
 
 namespace painters {
 
+    /*!
+     * @note Don't use shared ptr for Qt self managed ptr !!!
+     */
     class p_graphic_layer: QWidget {
         Q_OBJECT
     public:
@@ -39,13 +42,23 @@ namespace painters {
         uint32_t get_h() { return m_h; }
 
         void add_node(const std::string &name, QGraphicsItem* item_ptr ) {
-            m_nodes[name] = REF(QGraphicsItem)(item_ptr);
+            m_nodes[name] = item_ptr;
+        }
+
+        void delete_node(QGraphicsItem* item_ptr) {
+            std::map<std::string, QGraphicsItem*>::iterator iter = m_nodes.begin();
+            while(iter->second != item_ptr && iter != m_nodes.end()) {
+                iter++;
+            }
+            if (iter != m_nodes.end()) {
+                m_nodes.erase(iter);
+            }
         }
 
         void rename(const std::string &name) { m_layer_name = name; }
         const std::string &get_name() { return m_layer_name; }
 
-        std::map<std::string, REF(QGraphicsItem)> &get_nodes() { return m_nodes; }
+        std::map<std::string, QGraphicsItem*> &get_nodes() { return m_nodes; }
 
     public:
         uint32_t                                    m_w, m_h;
@@ -55,7 +68,7 @@ namespace painters {
         bool                                        m_visible;
         int32_t                                     m_layer_zbuffer;
         std::string                                 m_layer_name;
-        std::map<std::string, REF(QGraphicsItem)>   m_nodes;
+        std::map<std::string, QGraphicsItem*>   m_nodes;
     };
 
     class p_graphic_layer_stack {

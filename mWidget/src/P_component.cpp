@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <QRect>
 
+#include "P_CanvasWidget.h"
+
 //if(isSelected()){\
 //    QRectF bound_rect = boundingRect();\
 //    QRectF _out_line_ = bound_rect.adjusted(-m_payload.m_interval,\

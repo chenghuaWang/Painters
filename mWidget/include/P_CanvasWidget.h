@@ -49,7 +49,7 @@
     } \
 
 #define MOUSE_EVENT_MOVE(object_ptr) \
-    if (object_ptr##_enable) { \
+    if (object_ptr##_enable || m_cur_tool == tool_type::Select) { \
         if (_a.x() < 0 || _a.x() > m_scene_size.width()) break; \
         if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
         object_ptr->move_event_from_scene(_a); \
@@ -107,6 +107,8 @@ namespace painters {
             m_cur_choosed_layer->m_h = 720;
             m_cur_choosed_layer->set_zbuffer(0);
             m_layer_stack.push_layer(m_cur_choosed_layer);
+
+            m_s_instance = this;
         }
 
         ~p_canvas() {
@@ -229,9 +231,21 @@ namespace painters {
         QGraphicsPathItem   *m_reference_line_v = nullptr;
         QGraphicsRectItem   *m_rectItem = nullptr;
 
+        QGraphicsItem       *m_choosed_for_select = nullptr;
+        p_op_type           m_op_type = p_op_type::None;
+        qreal cauculate_distance(const QPointF &_a, const QPointF &_b) {
+            qreal x = _a.x() - _b.x();
+            qreal y = _a.y() - _b.y();
+            return qSqrt(x*x + y*y);
+        }
+
     public: /// Layer manager
         REF(p_graphic_layer)    m_cur_choosed_layer;
         p_graphic_layer_stack   m_layer_stack;
+
+    public:
+        static p_canvas         *m_s_instance;
+        static p_canvas*        get_instance();
     };
 
 }
