@@ -11,6 +11,10 @@
 #endif //! _MSC_VER
 
 #include "core_base.h"
+#include <QIcon>
+#include <QtMath>
+#include <QImage>
+#include <QPixmap>
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
@@ -20,9 +24,10 @@
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override; \
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; \
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override; \
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;\
 
 
-#define OVERLOAD_FUNC_IMPL(name) \
+#define OVERLOAD_FUNC_IMPL(name, base_class) \
     void name::mouseMoveEvent(QGraphicsSceneMouseEvent *event) { \
         if (event->modifiers() == Qt::AltModifier && isSelected()) { \
             QGraphicsItem::mouseMoveEvent(event); \
@@ -39,14 +44,59 @@
             } \
             else if (event->modifiers() == Qt::ControlModifier) { \
             }\
-        } \
-        else { \
-            event->ignore(); \
-        } \
-    } \
+        }\
+        else {\
+            event->ignore();\
+        }\
+    }\
     void name::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {\
         QGraphicsItem::mouseReleaseEvent(event); \
-    }
+    }\
+    void name::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) {\
+        {\
+            if (isSelected()) {\
+                QRectF bound_rect = boundingRect();\
+                QPen pen;\
+                pen.setWidth(1);\
+                pen.setColor(QColor(0, 64, 243, 60));\
+                pen.setStyle(Qt::DashLine);\
+                painter->setPen(pen);\
+                QRectF _out_line_ = bound_rect.adjusted(-m_payload.m_interval,\
+                                                        -m_payload.m_interval,\
+                                                        m_payload.m_interval,\
+                                                        m_payload.m_interval);\
+                painter->drawRect(_out_line_);\
+                painter->setPen(Qt::NoPen);\
+                painter->setBrush(QColor(0, 100, 200, 60));\
+                painter->drawEllipse(_out_line_.bottomRight(),\
+                                     m_payload.m_active_area_r,\
+                                     m_payload.m_active_area_r);\
+                painter->drawPixmap(QRect(_out_line_.bottomRight().x() - m_payload.m_active_area_r / 2,\
+                                          _out_line_.bottomRight().y() - m_payload.m_active_area_r / 2,\
+                                          m_payload.m_active_area_r,\
+                                          m_payload.m_active_area_r),\
+                                    m_payload.m_resize_pixmap);\
+                painter->drawEllipse(_out_line_.topRight(),\
+                                     m_payload.m_active_area_r,\
+                                     m_payload.m_active_area_r);\
+                painter->drawPixmap(QRect(_out_line_.topRight().x() - m_payload.m_active_area_r / 2,\
+                                          _out_line_.topRight().y() - m_payload.m_active_area_r / 2,\
+                                          m_payload.m_active_area_r,\
+                                          m_payload.m_active_area_r),\
+                                    m_payload.m_close_pixmap);\
+                painter->drawEllipse(_out_line_.bottomLeft(),\
+                                     m_payload.m_active_area_r,\
+                                     m_payload.m_active_area_r);\
+                painter->drawPixmap(QRect(_out_line_.bottomLeft().x() - m_payload.m_active_area_r / 2,\
+                                          _out_line_.bottomLeft().y() - m_payload.m_active_area_r / 2,\
+                                          m_payload.m_active_area_r,\
+                                          m_payload.m_active_area_r),\
+                                    m_payload.m_rotate_pixmap);\
+            }\
+        }\
+        base_class::paint(painter, option, widget);\
+    }\
+
 
 
 #define EVENT_FROM_SCENE public
@@ -54,6 +104,61 @@
     void move_event_from_scene(const QPointF &_a); \
     void press_event_from_scene(const QPointF &_a); \
     void release_event_from_scene(const QPointF &_a); \
+
+namespace painters {
+    enum class p_op_type {
+        Noen = 0,
+        Move,
+        Resize,
+        Rotate
+    };
+
+    struct p_op_payload {
+        p_op_payload() {
+            m_close_icon.load(":/icon/icons8-close-96.png");
+            m_resize_icon.load(":/icon/icons8-resize-96.png");
+            m_rotate_icon.load(":/icon/icons8-rotate-left-96.png");
+
+            __init_pixmap__();
+        }
+
+        ~p_op_payload() = default;
+
+        void __init_pixmap__() {
+            m_close_pixmap = QPixmap::fromImage(m_close_icon);
+            m_resize_pixmap = QPixmap::fromImage(m_resize_icon);
+            m_rotate_pixmap = QPixmap::fromImage(m_rotate_icon);
+        }
+
+        QPointF     m_center_point;
+        QPointF     m_bounding_box_size; ///< .rx for w, .ry for height.
+        QPointF     m_reference_point;
+
+        QPointF     m_scene_pos;
+        QPointF     m_local_pos;
+        QPointF     m_cur_pos;
+
+        int         m_active_area_r = 16; ///< used in circle. r.
+        int         m_interval = 4;///< interval between item and bounding box.
+
+        p_op_type   m_op_type;
+
+        static QImage   m_close_icon;
+        static QImage   m_resize_icon;
+        static QImage   m_rotate_icon;
+
+        QPixmap  m_close_pixmap;
+        QPixmap  m_resize_pixmap;
+        QPixmap  m_rotate_pixmap;
+
+    public:
+        qreal cauculate_distance(const QPointF &_a, const QPointF &_b) {
+            qreal x = _a.x() - _b.x();
+            qreal y = _a.y() - _b.y();
+            return qSqrt(x*x + y*y);
+        }
+    };
+}
 
 namespace painters {
 
@@ -110,6 +215,9 @@ namespace painters {
 
     OVERLOAD_EVENT: ///< below is the inner call, just when this component is selected.
         OVERLOAD_FUNC;
+
+    public:
+        p_op_payload m_payload;
 
     public:
         void __init__();
@@ -181,6 +289,9 @@ namespace painters {
 
     EVENT_FROM_SCENE:
         EVENT_FROM_SCENE_FUNC;
+
+    public:
+        p_op_payload m_payload;
 
     public: ///< get and settings
         bool is_dirty() { return m_dirty; }
@@ -257,6 +368,9 @@ namespace painters {
 
     EVENT_FROM_SCENE:
         EVENT_FROM_SCENE_FUNC;
+
+    public:
+        p_op_payload m_payload;
 
     public:
         const QColor &get_color_out_const() { return m_color_out; }
@@ -336,6 +450,9 @@ namespace painters {
 
     EVENT_FROM_SCENE:
         EVENT_FROM_SCENE_FUNC;
+
+    public:
+        p_op_payload m_payload;
 
     private:
         uint32_t            m_alpha_channel;

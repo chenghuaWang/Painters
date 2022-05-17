@@ -1,10 +1,34 @@
 #include "P_component.h"
 #include <QPainter>
-#include <QtMath>
+#include <QRect>
+
+//if(isSelected()){\
+//    QRectF bound_rect = boundingRect();\
+//    QRectF _out_line_ = bound_rect.adjusted(-m_payload.m_interval,\
+//                                            -m_payload.m_interval,\
+//                                            m_payload.m_interval,\
+//                                            m_payload.m_interval);\
+//    QPointF pos = event->pos();\
+//    QPointF scene_pos = event->scenePos();\
+//    if (m_payload.cauculate_distance(pos, _out_line_.bottomRight()) <= m_payload.m_active_area_r){\
+//        m_payload.m_op_type = p_op_type::Resize;\
+//        qDebug() << "resize";\
+//    }\
+//    else if (m_payload.cauculate_distance(pos, _out_line_.bottomLeft()) <= m_payload.m_active_area_r){\
+//        m_payload.m_op_type = p_op_type::Rotate;\
+//        qDebug() << "rotate";\
+//    }\
+//}
+
+namespace painters {
+QImage    p_op_payload::m_close_icon;
+QImage    p_op_payload::m_resize_icon;
+QImage    p_op_payload::m_rotate_icon;
+}
 
 namespace painters {
 
-OVERLOAD_FUNC_IMPL(p_brush_component)
+OVERLOAD_FUNC_IMPL(p_brush_component, QGraphicsPathItem);
 
 void p_brush_component::move_event_from_scene(const QPointF &_a) {
     m_path.lineTo(_a);
@@ -99,7 +123,7 @@ void p_brush_component::set_movable(bool enable) {
 
 namespace painters {
 
-OVERLOAD_FUNC_IMPL(p_rect_component);
+OVERLOAD_FUNC_IMPL(p_rect_component, QGraphicsRectItem);
 
 void p_rect_component::__init__() {
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
@@ -153,7 +177,7 @@ std::pair<QPointF, QPointF> p_rect_component::__get_rect_payload__() {
 
 namespace painters {
 
-    OVERLOAD_FUNC_IMPL(p_circle_component);
+    OVERLOAD_FUNC_IMPL(p_circle_component, QGraphicsEllipseItem);
 
     void p_circle_component::__init__() {
         setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
@@ -206,7 +230,7 @@ namespace painters {
 
 namespace painters {
 
-OVERLOAD_FUNC_IMPL(p_image_component);
+OVERLOAD_FUNC_IMPL(p_image_component, QGraphicsPixmapItem);
 
 void p_image_component::__init__() {
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);

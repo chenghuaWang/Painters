@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->toolButton_shape, SIGNAL(clicked(bool)), &m_default_scene, SLOT(slots_set_tool_type_shape(bool)));
     connect(ui->toolButton_pen, SIGNAL(clicked(bool)), &m_default_scene, SLOT(slots_set_tool_type_pen(bool)));
     connect(ui->toolButton_image, SIGNAL(clicked(bool)), &m_default_scene, SLOT(slots_set_tool_type_image(bool)));
+    connect(ui->toolButton_select, &QPushButton::clicked, [=](){
+        m_default_scene.set_tool_type(painters::tool_type::Select);
+    });
 
     connect(ui->toolButton_shape, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_shape(bool)));
     connect(ui->toolButton_pen, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_pen(bool)));
