@@ -42,6 +42,9 @@ private:
     painters::p_image_inspector     m_image_inspector;
 
 private:
+    QString                         m_saved_file_path;
+
+private:
     painters::p_graphic_view *gv = new painters::p_graphic_view();
     Ui::MainWindow  *ui;
     painters::p_canvas  m_default_scene;

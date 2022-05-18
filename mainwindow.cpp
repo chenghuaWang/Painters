@@ -2,6 +2,10 @@
 #include "./ui_mainwindow.h"
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QGraphicsLineItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -56,6 +60,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionAdd_new_layer, &QAction::triggered, [=](){
         auto name_tmp = QInputDialog::getText(this, "Create new layer", "Enter layer name");
         m_default_scene.add_layer(name_tmp.toStdString());
+    });
+
+    connect(ui->actionSave_Files, &QAction::triggered, [=](){
+        if (m_saved_file_path.isEmpty()) {
+            m_saved_file_path = QFileDialog::getSaveFileName(this, "Save Project", "", ".projectp");
+        }
     });
 
     // init brush inspector
