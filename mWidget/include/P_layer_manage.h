@@ -47,12 +47,23 @@ namespace painters {
 
         void delete_node(QGraphicsItem* item_ptr) {
             std::map<std::string, QGraphicsItem*>::iterator iter = m_nodes.begin();
-            while(iter->second != item_ptr && iter != m_nodes.end()) {
+            while(iter != m_nodes.end() && iter->second != item_ptr) {
                 iter++;
             }
             if (iter != m_nodes.end()) {
                 m_nodes.erase(iter);
             }
+        }
+
+        bool has_node(QGraphicsItem* item_ptr) {
+            std::map<std::string, QGraphicsItem*>::iterator iter = m_nodes.begin();
+            while(iter != m_nodes.end() && iter->second != item_ptr) {
+                iter++;
+            }
+            if (iter != m_nodes.end()) {
+                return true;
+            }
+            return false;
         }
 
         void rename(const std::string &name) { m_layer_name = name; }
@@ -61,14 +72,14 @@ namespace painters {
         std::map<std::string, QGraphicsItem*> &get_nodes() { return m_nodes; }
 
     public:
-        uint32_t                                    m_w, m_h;
+        uint32_t                                    m_w = 1240, m_h = 720;
         bool                                        m_locked = false;
 
     private:
         bool                                        m_visible;
         int32_t                                     m_layer_zbuffer;
         std::string                                 m_layer_name;
-        std::map<std::string, QGraphicsItem*>   m_nodes;
+        std::map<std::string, QGraphicsItem*>       m_nodes;
     };
 
     class p_graphic_layer_stack {

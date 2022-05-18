@@ -150,10 +150,13 @@ void p_rect_component::release_event_from_scene(const QPointF &_a) {
     m_center_point = (m_start_point + m_end_point) / 2;
 
     auto [v1, v2] = __get_rect_payload__();
-    setRect(v1.x(), v1.y(), v2.x(), v2.y());
+    QRect tmp_for_set(v1.x(), v1.y(), v2.x(), v2.y());
 
-    // this->setPos(m_center_point);
+    QPointF tmp_center = this->boundingRect().center();
+    this->setPos(tmp_center);
+    tmp_for_set.translate(-tmp_center.x(), -tmp_center.y());
     this->prepareGeometryChange();
+    setRect(tmp_for_set);
     this->update();
     m_dirty = true;
 }
@@ -204,11 +207,15 @@ namespace painters {
         m_center_point = (m_start_point + m_end_point) / 2;
 
         auto [v1, v2] = __get_rect_payload__();
-        setRect(v1.x(), v1.y(), v2.x(), v2.y());
+        QRect tmp_for_set(v1.x(), v1.y(), v2.x(), v2.y());
 
-        //this->setPos(m_center_point);
+        QPointF tmp_center = this->boundingRect().center();
+        this->setPos(tmp_center);
+        tmp_for_set.translate(-tmp_center.x(), -tmp_center.y());
         this->prepareGeometryChange();
+        setRect(tmp_for_set);
         this->update();
+        m_dirty = true;
         m_dirty = true;
     }
 

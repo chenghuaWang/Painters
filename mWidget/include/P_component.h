@@ -56,43 +56,48 @@
     void name::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) {\
         {\
             if (isSelected()) {\
+                qreal scale_factor = abs(painter->transform().m11());\
+                scale_factor = qMax(scale_factor, 0.85);\
+                QTransform trans_previous = this->transform();\
+                this->resetTransform();\
                 QRectF bound_rect = boundingRect();\
                 QPen pen;\
                 pen.setWidth(1);\
                 pen.setColor(QColor(0, 64, 243, 60));\
                 pen.setStyle(Qt::DashLine);\
                 painter->setPen(pen);\
-                QRectF _out_line_ = bound_rect.adjusted(-m_payload.m_interval,\
-                                                        -m_payload.m_interval,\
-                                                        m_payload.m_interval,\
-                                                        m_payload.m_interval);\
+                QRectF _out_line_ = bound_rect.adjusted(-m_payload.m_interval / scale_factor,\
+                                                        -m_payload.m_interval / scale_factor,\
+                                                        m_payload.m_interval / scale_factor,\
+                                                        m_payload.m_interval / scale_factor);\
                 painter->drawRect(_out_line_);\
                 painter->setPen(Qt::NoPen);\
                 painter->setBrush(QColor(0, 100, 200, 60));\
                 painter->drawEllipse(_out_line_.bottomRight(),\
-                                     m_payload.m_active_area_r,\
-                                     m_payload.m_active_area_r);\
-                painter->drawPixmap(QRect(_out_line_.bottomRight().x() - m_payload.m_active_area_r / 2,\
-                                          _out_line_.bottomRight().y() - m_payload.m_active_area_r / 2,\
-                                          m_payload.m_active_area_r,\
-                                          m_payload.m_active_area_r),\
+                                     m_payload.m_active_area_r / scale_factor,\
+                                     m_payload.m_active_area_r / scale_factor);\
+                painter->drawPixmap(QRect(_out_line_.bottomRight().x() - m_payload.m_active_area_r / (2*scale_factor),\
+                                          _out_line_.bottomRight().y() - m_payload.m_active_area_r / (2*scale_factor),\
+                                          m_payload.m_active_area_r / scale_factor,\
+                                          m_payload.m_active_area_r / scale_factor),\
                                     m_payload.m_resize_pixmap);\
                 painter->drawEllipse(_out_line_.topRight(),\
-                                     m_payload.m_active_area_r,\
-                                     m_payload.m_active_area_r);\
-                painter->drawPixmap(QRect(_out_line_.topRight().x() - m_payload.m_active_area_r / 2,\
-                                          _out_line_.topRight().y() - m_payload.m_active_area_r / 2,\
-                                          m_payload.m_active_area_r,\
-                                          m_payload.m_active_area_r),\
+                                     m_payload.m_active_area_r / scale_factor,\
+                                     m_payload.m_active_area_r / scale_factor);\
+                painter->drawPixmap(QRect(_out_line_.topRight().x() - m_payload.m_active_area_r / (2*scale_factor),\
+                                          _out_line_.topRight().y() - m_payload.m_active_area_r / (2*scale_factor),\
+                                          m_payload.m_active_area_r / scale_factor,\
+                                          m_payload.m_active_area_r / scale_factor),\
                                     m_payload.m_close_pixmap);\
                 painter->drawEllipse(_out_line_.bottomLeft(),\
-                                     m_payload.m_active_area_r,\
-                                     m_payload.m_active_area_r);\
-                painter->drawPixmap(QRect(_out_line_.bottomLeft().x() - m_payload.m_active_area_r / 2,\
-                                          _out_line_.bottomLeft().y() - m_payload.m_active_area_r / 2,\
-                                          m_payload.m_active_area_r,\
-                                          m_payload.m_active_area_r),\
+                                     m_payload.m_active_area_r / scale_factor,\
+                                     m_payload.m_active_area_r / scale_factor);\
+                painter->drawPixmap(QRect(_out_line_.bottomLeft().x() - m_payload.m_active_area_r / (2*scale_factor),\
+                                          _out_line_.bottomLeft().y() - m_payload.m_active_area_r / (2*scale_factor),\
+                                          m_payload.m_active_area_r / scale_factor,\
+                                          m_payload.m_active_area_r / scale_factor),\
                                     m_payload.m_rotate_pixmap);\
+                this->setTransform(trans_previous);\
             }\
         }\
         base_class::paint(painter, option, widget);\

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <QFileDialog>
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -50,6 +51,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tabWidget->insertTab(0, gv, "Main drawing pad");
     gv->setScene(&m_default_scene);
     // ui->graphicsView_main->setScene(&m_default_scene);
+
+    // connect action
+    connect(ui->actionAdd_new_layer, &QAction::triggered, [=](){
+        auto name_tmp = QInputDialog::getText(this, "Create new layer", "Enter layer name");
+        m_default_scene.add_layer(name_tmp.toStdString());
+    });
 
     // init brush inspector
     m_brush_inspector.set_r_slider(ui->horizontalSlider_brush_r);

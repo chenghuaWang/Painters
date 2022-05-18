@@ -45,12 +45,35 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
 
     if (m_cur_tool == tool_type::Select) {
+
+        if (m_cur_choosed_layer->m_locked) {
+            QMessageBox::critical(nullptr, "Layer is locked", "free the layer before draw!!!");
+            return;
+        }
+
+        m_select_pos = event->scenePos();
+
         if (m_choosed_for_select == nullptr) {
             QTransform transform;
             m_choosed_for_select = this->itemAt(_a, transform);
-            m_choosed_for_select->setSelected(true);
+            m_choosed_for_select->setSelected(false);
+
+            if (m_choosed_for_select != nullptr && m_cur_choosed_layer->has_node(m_choosed_for_select)) {
+                m_choosed_for_select->setSelected(true);
+            }
+            else if (m_choosed_for_select != nullptr && !m_cur_choosed_layer->has_node(m_choosed_for_select)) {
+                m_choosed_for_select->setSelected(false);
+                event->ignore();
+                return;
+            }
         }
         else {
+            if (m_choosed_for_select != nullptr && !m_cur_choosed_layer->has_node(m_choosed_for_select)) {
+                m_choosed_for_select->setSelected(false);
+                m_choosed_for_select = nullptr;
+                return;
+            }
+
             QRectF bound_rect = m_choosed_for_select->boundingRect();
             QRectF _out_line_ = bound_rect.adjusted(-4, -4, 4, 4);
             QPointF pos = event->pos();
@@ -67,15 +90,19 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
                 emit signal_update_layer_tree();
             }
             else if (cauculate_distance(scene_pos, m_choosed_for_select->mapToScene(_out_line_.bottomRight())) <= 16.0) {
-
+                m_op_type = p_op_type::Resize;
+                m_select_pos = event->scenePos();
             }
             else if (cauculate_distance(scene_pos, m_choosed_for_select->mapToScene(_out_line_.bottomLeft())) <= 16.0) {
-
-            } else {
+                m_op_type = p_op_type::Rotate;
+                m_select_pos = event->scenePos();
+            }
+            else {
                 m_choosed_for_select->setSelected(false);
                 QTransform transform;
                 m_choosed_for_select = this->itemAt(_a, transform);
                 m_choosed_for_select->setSelected(true);
+                m_select_pos = event->scenePos();
             }
         }
     }
@@ -108,6 +135,55 @@ void p_canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         break;
     }
 
+    if (m_cur_tool == tool_type::Select) {
+        if (m_op_type == p_op_type::Resize) {
+            QPointF scene_pos = event->scenePos();
+            QPointF local_pos = event->pos();
+
+            QRectF rect_tmp = m_choosed_for_select->boundingRect();
+
+            qreal item_w = abs(m_choosed_for_select->mapToScene(rect_tmp.center()).x() - scene_pos.x()) * 2 - 8;
+
+            qreal w_rate = item_w / rect_tmp.width();
+
+            m_choosed_for_select->setScale(w_rate);
+            m_choosed_for_select->setSelected(true);
+            this->update();
+        }
+        else if (m_op_type == p_op_type::Rotate) {
+            QPointF scene_pos = event->scenePos();
+            QPointF local_pos = event->pos();
+
+            QPointF center_tmp = m_choosed_for_select->boundingRect().center();
+
+            qreal center_x = m_choosed_for_select->mapToScene(center_tmp).x();
+            qreal center_y = m_choosed_for_select->mapToScene(center_tmp).y();
+
+            QVector2D startVec(m_select_pos.x() - center_x, m_select_pos.y() - center_y);
+            startVec.normalize();
+            QVector2D endVec(scene_pos.x() - center_x, scene_pos.y() - center_y);
+            endVec.normalize();
+
+            qreal dotValue = QVector2D::dotProduct(startVec, endVec);
+            if (dotValue > 1.0)  dotValue = 1.0;
+            else if (dotValue < -1.0)  dotValue = -1.0;
+
+            dotValue = qAcos(dotValue);
+            if (isnan(dotValue))  dotValue = 0.0;
+
+            qreal angle = dotValue * 1.0 / (3.1415926 / 180);
+            QVector3D crossValue = QVector3D::crossProduct(QVector3D(startVec, 1.0), QVector3D(endVec, 1.0));
+            if (crossValue.z() < 0)  angle = -angle;
+            m_rotate_accumulate = angle;
+            m_rotate_transform.reset();
+            m_rotate_transform.rotate(m_rotate_accumulate);
+            m_choosed_for_select->setTransform(m_choosed_for_select->transform() * m_rotate_transform);
+            m_select_pos = scene_pos;
+            m_choosed_for_select->setSelected(true);
+            this->update();
+        }
+    }
+
     // broadcast this event to other component. TODO
     QGraphicsScene::mouseMoveEvent(event);
 }
@@ -130,13 +206,15 @@ void p_canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         MOUSE_EVENT_RELEASE(m_cur_image);
         break;
     case tool_type::Select:
+        m_op_type = p_op_type::None;
+        m_rotate_accumulate = 0;
+        m_rotate_transform.reset();
         break;
     case tool_type::Effect:
         break;
     default:
         break;
     }
-
     // broadcast this event to other component. TODO
     QGraphicsScene::mouseReleaseEvent(event);
 }

@@ -231,6 +231,9 @@ namespace painters {
         QGraphicsPathItem   *m_reference_line_v = nullptr;
         QGraphicsRectItem   *m_rectItem = nullptr;
 
+        QTransform          m_rotate_transform;
+        qreal               m_rotate_accumulate = 0.0;
+        QPointF             m_select_pos;
         QGraphicsItem       *m_choosed_for_select = nullptr;
         p_op_type           m_op_type = p_op_type::None;
         qreal cauculate_distance(const QPointF &_a, const QPointF &_b) {

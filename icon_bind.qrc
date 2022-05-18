@@ -9,5 +9,9 @@
         <file>icon/icons8-resize-96.png</file>
         <file>icon/icons8-rotate-left-96.png</file>
         <file>icon/icons8-select-64.png</file>
+        <file>icon/icons8-layers-96.png</file>
+        <file>icon/icons8-open-file-under-cursor-96.png</file>
+        <file>icon/icons8-save-96.png</file>
+        <file>icon/icons8-export-100.png</file>
     </qresource>
 </RCC>
