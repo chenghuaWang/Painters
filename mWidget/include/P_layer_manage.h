@@ -72,7 +72,7 @@ namespace painters {
         std::map<std::string, QGraphicsItem*> &get_nodes() { return m_nodes; }
 
     public:
-        uint32_t                                    m_w = 1240, m_h = 720;
+        uint32_t                                    m_w = 1024, m_h = 720;
         bool                                        m_locked = false;
 
     private:
