@@ -41,8 +41,13 @@ namespace painters {
         uint32_t get_w() { return m_w; }
         uint32_t get_h() { return m_h; }
 
-        void add_node(const std::string &name, QGraphicsItem* item_ptr ) {
+        void add_node(const std::string &name, QGraphicsItem* item_ptr, const std::string &father_type ) {
             m_nodes[name] = item_ptr;
+            m_type_translate_node[item_ptr] = father_type;
+        }
+
+        void rewrite_to_file() {
+            // TODO A QtFile stream;
         }
 
         void delete_node(QGraphicsItem* item_ptr) {
@@ -80,6 +85,7 @@ namespace painters {
         int32_t                                     m_layer_zbuffer;
         std::string                                 m_layer_name;
         std::map<std::string, QGraphicsItem*>       m_nodes;
+        std::map<QGraphicsItem*, std::string>       m_type_translate_node;
     };
 
     class p_graphic_layer_stack {
@@ -98,6 +104,12 @@ namespace painters {
         }
 
         size_t get_size() { return m_layer_stack.size(); }
+
+        void rewrite_to_file() { // TODO Input to Qt Data stream
+            for (auto item: m_layer_stack) {
+                item->rewrite_to_file(); // TODO Input to Qt Data stream.
+            }
+        }
 
     public:
         ///< Make this class works like a vector;

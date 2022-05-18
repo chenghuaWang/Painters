@@ -45,7 +45,7 @@
         other_sentence;\
         object_ptr->press_event_from_scene(_a); \
         addItem(object_ptr); \
-        m_cur_choosed_layer->add_node(object_ptr->get_name(), object_ptr); \
+        m_cur_choosed_layer->add_node(object_ptr->get_name(), object_ptr, #object_type); \
     } \
 
 #define MOUSE_EVENT_MOVE(object_ptr) \
@@ -107,7 +107,6 @@ namespace painters {
             m_cur_choosed_layer->m_h = 720;
             m_cur_choosed_layer->set_zbuffer(0);
             m_layer_stack.push_layer(m_cur_choosed_layer);
-
             m_s_instance = this;
         }
 
