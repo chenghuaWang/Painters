@@ -67,6 +67,7 @@ set(p_mWidget_include_dir ${CMAKE_SOURCE_DIR}/mWidget/include)
 set(p_editor_include_dir ${CMAKE_SOURCE_DIR}/Editor/include)
 
 include_directories(${p_core_include_dir})
+include_directories(${p_core_include_dir}/include)
 include_directories(${p_mWidget_include_dir})
 include_directories(${p_editor_include_dir})
 

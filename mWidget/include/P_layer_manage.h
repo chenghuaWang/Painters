@@ -15,6 +15,7 @@
 #endif //! _MSC_VER
 
 #include "core_base.h"
+#include "file_system.h"
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 
@@ -46,10 +47,6 @@ namespace painters {
             m_type_translate_node[item_ptr] = father_type;
         }
 
-        void rewrite_to_file() {
-            // TODO A QtFile stream;
-        }
-
         void delete_node(QGraphicsItem* item_ptr) {
             std::map<std::string, QGraphicsItem*>::iterator iter = m_nodes.begin();
             while(iter != m_nodes.end() && iter->second != item_ptr) {
@@ -76,6 +73,8 @@ namespace painters {
 
         std::map<std::string, QGraphicsItem*> &get_nodes() { return m_nodes; }
 
+        int node_nums() { return (int)m_nodes.size(); }
+
     public:
         uint32_t                                    m_w = 1024, m_h = 720;
         bool                                        m_locked = false;
@@ -84,6 +83,8 @@ namespace painters {
         bool                                        m_visible;
         int32_t                                     m_layer_zbuffer;
         std::string                                 m_layer_name;
+
+    public:
         std::map<std::string, QGraphicsItem*>       m_nodes;
         std::map<QGraphicsItem*, std::string>       m_type_translate_node;
     };
@@ -105,10 +106,33 @@ namespace painters {
 
         size_t get_size() { return m_layer_stack.size(); }
 
-        void rewrite_to_file() { // TODO Input to Qt Data stream
-            for (auto item: m_layer_stack) {
-                item->rewrite_to_file(); // TODO Input to Qt Data stream.
+        void rewrite_to_file(const std::string &file_path) {
+            p_project_to_json writer;
+            /* prepare json_phase_payload payload */
+            json_phase_payload _a;
+            _a.m_layer_nums = (int)get_size();
+
+            writer._a = _a;
+            for (int i = 0; i < _a.m_layer_nums; ++i) {
+                REF(p_graphic_layer) tmp_layer = m_layer_stack[i];
+                /* prepare the layer payload */
+                json_layer_payload prepare_component;
+                prepare_component.m_layer_name = m_layer_stack[i]->get_name();
+                prepare_component.m_component_nums = tmp_layer->node_nums();
+                prepare_component.height = tmp_layer->m_h;
+                prepare_component.width = tmp_layer->m_w;
+
+                for (auto &item: tmp_layer->m_nodes) {
+                    if (tmp_layer->m_type_translate_node[item.second] == "p_brush_component") {
+                        prepare_component.m_path_item[(QGraphicsPathItem*)item.second] = item.first;
+                    }
+                    else {
+                        // TODO;
+                    }
+                }
+                writer.m_data.push_back(prepare_component);
             }
+            writer.write_to(file_path);
         }
 
     public:
@@ -118,7 +142,7 @@ namespace painters {
         const std::vector<REF(p_graphic_layer)>::const_iterator begin_const() { return m_layer_stack.begin(); }
         const std::vector<REF(p_graphic_layer)>::const_iterator end_const() { return m_layer_stack.end(); }
 
-    private:
+    public:
         std::vector<REF(p_graphic_layer)>     m_layer_stack;
     };
 

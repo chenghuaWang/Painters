@@ -66,6 +66,42 @@ MainWindow::MainWindow(QWidget *parent)
         if (m_saved_file_path.isEmpty()) {
             m_saved_file_path = QFileDialog::getSaveFileName(this, "Save Project", "", ".projectp");
         }
+        m_default_scene.m_layer_stack.rewrite_to_file(m_saved_file_path.toStdString());
+    });
+
+    connect(ui->actionOpen_Project, &QAction::triggered, [=](){
+        QString open_file_path = QFileDialog::getOpenFileName(this, "Save Project", "", ""); //.projectp
+        m_saved_file_path = open_file_path;
+
+        for (auto &layer: m_default_scene.m_layer_stack) {
+            for (auto &item: layer->m_nodes) {
+                m_default_scene.removeItem(item.second);
+            }
+            layer->m_nodes.clear();
+            layer->m_type_translate_node.clear();
+        }
+        m_default_scene.m_layer_stack.m_layer_stack.clear();
+        this->slots_tree_node_update();
+
+        painters::p_project_phaser reader;
+        reader.phase(m_saved_file_path.toStdString());
+
+        auto obj_base = reader.data();
+        auto obj_data = reader.get_data();
+
+        for (auto &item: obj_data) {
+            m_default_scene.add_layer(item.m_layer_name);
+            m_default_scene.m_cur_choosed_layer->m_h = item.height;
+            m_default_scene.m_cur_choosed_layer->m_w = item.width;
+            for (auto &path_item: item.m_path_item) {
+                m_default_scene.m_cur_choosed_layer->add_node(path_item.second, path_item.first, "p_brush_component");
+
+                m_default_scene.addItem(path_item.first); //path_item.first
+            }
+            /* TODO pixmap, rect, ellipse, other stuff */
+        }
+        this->slots_tree_node_update();
+        m_default_scene.update();
     });
 
     // init brush inspector

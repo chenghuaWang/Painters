@@ -220,6 +220,12 @@ namespace painters {
             __init__();
         };
 
+        p_brush_component(QGraphicsPathItem *rhs, const std::string &name= "brush"):
+            p_component_obj(p_component_type::Brush, name),
+            QGraphicsPathItem(rhs) {
+            m_dirty = false;
+        }
+
     OVERLOAD_EVENT: ///< below is the inner call, just when this component is selected.
         OVERLOAD_FUNC;
 

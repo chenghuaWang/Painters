@@ -7,6 +7,7 @@
 #include "P_GraphicViewport.h"
 #include "P_CanvasWidget.h"
 #include "core_base.h"
+#include "file_system.h"
 #include "p_inspector.h"
 #include "P_layer_manage.h"
 

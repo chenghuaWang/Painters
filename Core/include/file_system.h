@@ -13,9 +13,15 @@
 #define FILE_SYSTEM_H
 
 #include "core_base.h"
+
+#include <QPainterPath>
+
 #include <QJsonValue>
+#include <QJsonArray>
 #include <QJsonObject>
+
 #include <QJsonDocument>
+#include <QByteArray>
 #include <QGraphicsItem>
 #include <QGraphicsPathItem>
 #include <QGraphicsRectItem>
@@ -31,6 +37,7 @@ namespace painters {
 
     struct json_layer_payload {
         int m_component_nums;
+        int width, height;
         std::string m_layer_name;
         std::map<QGraphicsPathItem*, std::string> m_path_item;
         std::map<QGraphicsRectItem*, std::string> m_rect_item;
@@ -40,7 +47,6 @@ namespace painters {
 
     struct json_phase_payload {
         int   m_layer_nums;
-
     };
 
     class p_project_phaser {
@@ -49,9 +55,19 @@ namespace painters {
 
         json_phase_payload data() const { return _a;}
 
+        std::vector<json_layer_payload> &get_data() {return m_layers_payload;}
+
     private:
         json_phase_payload _a;
         std::vector<json_layer_payload> m_layers_payload;
+    };
+
+    class p_project_to_json {
+    public:
+        json_phase_payload _a;
+        std::vector<json_layer_payload> m_data;
+
+        void write_to(const std::string &file_path);
     };
 
 }

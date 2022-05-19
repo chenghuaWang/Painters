@@ -33,7 +33,7 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             m_cur_image = new p_image_component(m_cur_image_string, __combine_name__(m_cur_image_cnt));
             m_cur_image->press_event_from_scene(_a);
             addItem(m_cur_image);
-            m_cur_choosed_layer->add_node(m_cur_image->get_name(), m_cur_image);
+            m_cur_choosed_layer->add_node(m_cur_image->get_name(), m_cur_image, "QGraphicsPixmapItem");
         }
         break;
     case tool_type::Select:
