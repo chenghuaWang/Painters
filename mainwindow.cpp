@@ -64,13 +64,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionSave_Files, &QAction::triggered, [=](){
         if (m_saved_file_path.isEmpty()) {
-            m_saved_file_path = QFileDialog::getSaveFileName(this, "Save Project", "", ".projectp");
+            m_saved_file_path = QFileDialog::getSaveFileName(this, "Save Project", "C:", "Project File (*.projectp)");
         }
+        m_saved_file_path += ".projectp";
         m_default_scene.m_layer_stack.rewrite_to_file(m_saved_file_path.toStdString());
     });
 
     connect(ui->actionOpen_Project, &QAction::triggered, [=](){
-        QString open_file_path = QFileDialog::getOpenFileName(this, "Save Project", "", ""); //.projectp
+        QString open_file_path = QFileDialog::getOpenFileName(this, "Save Project", "C:", "Project File (*.projectp)"); //.projectp
         m_saved_file_path = open_file_path;
 
         for (auto &layer: m_default_scene.m_layer_stack) {

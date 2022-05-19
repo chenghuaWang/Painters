@@ -236,6 +236,7 @@ namespace painters {
         void __init__();
         QColor &get_color() { return m_color; }
         bool is_dirty() { return m_dirty; }
+        void set_dirty(bool enable) { m_dirty = enable; }
 
         void set_pen(QPen &pen) { m_pen = pen; setPen(m_pen); }
         void set_color(QColor &color) { m_color= color, m_pen.setColor(color); setPen(m_pen);}

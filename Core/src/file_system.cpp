@@ -178,6 +178,50 @@ void p_project_to_json::write_to(const std::string &file_path) {
             layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
         }
 
+        for (auto &item:m_data[i].m_rect_item) {
+            QJsonObject component_obj;
+            component_obj.insert("type", QJsonValue(CLASS_TYPE_STR(QGraphicsRectItem)));
+            component_obj.insert("name", QJsonValue(QString::fromStdString(item.second)));
+
+
+            /* TODO Add Rect self inner shape. */
+            /* TODO Add Brush. */
+
+
+            QColor tmp_color = item.first->pen().color();
+            QJsonArray color;
+            color.append(QJsonValue(tmp_color.red()));
+            color.append(QJsonValue(tmp_color.green()));
+            color.append(QJsonValue(tmp_color.blue()));
+            color.append(QJsonValue(tmp_color.alpha()));
+
+            component_obj.insert("pen_color", color);
+
+            QPointF pos_tmp = item.first->pos();
+            QJsonArray pos;
+            pos.append(QJsonValue(pos_tmp.x()));
+            pos.append(QJsonValue(pos_tmp.y()));
+
+            component_obj.insert("position", pos);
+
+            QTransform transform_obj = item.first->transform();
+            QJsonArray transform_tmp;
+            transform_tmp.append(QJsonValue(transform_obj.m11()));
+            transform_tmp.append(QJsonValue(transform_obj.m12()));
+            transform_tmp.append(QJsonValue(transform_obj.m13()));
+            transform_tmp.append(QJsonValue(transform_obj.m21()));
+            transform_tmp.append(QJsonValue(transform_obj.m22()));
+            transform_tmp.append(QJsonValue(transform_obj.m23()));
+            transform_tmp.append(QJsonValue(transform_obj.m31()));
+            transform_tmp.append(QJsonValue(transform_obj.m32()));
+            transform_tmp.append(QJsonValue(transform_obj.m33()));
+
+            component_obj.insert("transform", transform_tmp);
+            component_obj.insert("pen_width", item.first->pen().widthF());
+
+            layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
+        }
+
         /* For other component */
 
         rootObj.insert(QString::fromStdString("layer__" + std::to_string(i)), layer_obj);
