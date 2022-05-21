@@ -1,4 +1,5 @@
 #include "P_CanvasWidget.h"
+#include <QInputDialog>
 
 namespace painters {
 
@@ -34,11 +35,31 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             m_cur_image->press_event_from_scene(_a);
             addItem(m_cur_image);
             m_cur_choosed_layer->add_node(m_cur_image->get_name(), m_cur_image, "QGraphicsPixmapItem");
+            emit signal_update_layer_tree();
         }
         break;
     case tool_type::Select:
         break;
     case tool_type::Effect:
+        break;
+    case tool_type::Text:
+        if (event->button() == Qt::LeftButton &&
+                event->modifiers() != Qt::AltModifier &&
+                event->modifiers() != Qt::ShiftModifier) {
+            m_cur_text_enable = true;
+            m_cur_text = new p_text_component(__combine_name__(m_cur_image_cnt));
+
+            m_cur_text_string = QInputDialog::getText(nullptr, "Put the text you want to show", "Text:").toStdString();
+            if (m_cur_text_string.empty()) return;
+
+            m_cur_text->setPlainText(m_cur_text_string.c_str());
+            m_cur_text->setFont(m_cur_text_font);
+            m_cur_text->press_event_from_scene(_a);
+            m_cur_text->setDefaultTextColor(m_cur_text_color);
+            addItem(m_cur_text);
+            m_cur_choosed_layer->add_node(m_cur_text->get_name(), m_cur_text, "QGraphicsTextItem");
+            emit signal_update_layer_tree();
+        }
         break;
     default:
         break;
@@ -131,6 +152,10 @@ void p_canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         break;
     case tool_type::Effect:
         break;
+    case tool_type::Text:
+        MOUSE_EVENT_MOVE(m_cur_text);
+        break;
+        break;
     default:
         break;
     }
@@ -211,6 +236,10 @@ void p_canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         m_rotate_transform.reset();
         break;
     case tool_type::Effect:
+        break;
+    case tool_type::Text:
+        MOUSE_EVENT_RELEASE(m_cur_text);
+        break;
         break;
     default:
         break;
@@ -339,6 +368,18 @@ void p_canvas::slots_shape_pen_changed(QPen &_a) {
 
 void p_canvas::slots_image_string_changed(const QString &_a) {
     m_cur_image_string = _a.toStdString();
+}
+
+void p_canvas::slots_text_string_changed(const QString &_a) {
+    m_cur_text_string = _a.toStdString();
+}
+
+void p_canvas::slots_text_font_changed(const QFont &_a) {
+    m_cur_text_font = _a;
+}
+
+void p_canvas::slots_text_color_changed(const QColor &_a) {
+    m_cur_text_color = _a;
 }
 
 }

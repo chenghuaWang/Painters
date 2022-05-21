@@ -76,6 +76,7 @@ namespace painters {
         Circle,
         Image,
         Effect,
+        Text,
         // for pixmap
         Pixmap,
         Pixmap_Pen_mutable,
@@ -130,6 +131,8 @@ namespace painters {
             case tool_type::Rect:
                 return "Rect " + std::to_string(++a);
                 break;
+            case tool_type::Text:
+                return "Text " + std::to_string(++a);
             default:
                 break;
             }
@@ -193,12 +196,17 @@ namespace painters {
 
         void slots_image_string_changed(const QString &_a);
 
+        void slots_text_string_changed(const QString &_a);
+        void slots_text_font_changed(const QFont &_a);
+        void slots_text_color_changed(const QColor &_a);
+
     private: ///< numerous flags setting.
         tool_type           m_cur_tool = tool_type::Pen;
         bool                m_cur_brush_enable = false;
         bool                m_cur_rect_enable = false;
         bool                m_cur_circle_enable = false;
         bool                m_cur_image_enable = false;
+        bool                m_cur_text_enable = false;
 
     private:
         QPen                m_cur_brush_pen;
@@ -215,7 +223,11 @@ namespace painters {
         p_rect_component    *m_cur_rect = nullptr;
         p_circle_component  *m_cur_circle =  nullptr;
         p_image_component   *m_cur_image = nullptr;
+        p_text_component    *m_cur_text = nullptr;
         std::string         m_cur_image_string;
+        std::string         m_cur_text_string = "";
+        QFont               m_cur_text_font;
+        QColor              m_cur_text_color;
 
     private: ///< num of every component.
         uint32_t            m_cur_brush_cnt = 0;

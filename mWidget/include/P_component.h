@@ -17,6 +17,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <QGraphicsItem>
+#include <QGraphicsTextItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 
@@ -116,7 +117,8 @@ namespace painters {
         None = 0,
         Move,
         Resize,
-        Rotate
+        Rotate,
+        Text
     };
 
     struct p_op_payload {
@@ -177,7 +179,8 @@ namespace painters {
         // for alpha channel.
         Pixmap,
         // other component.
-        Image
+        Image,
+        Text
     };
 
     /*!
@@ -472,6 +475,30 @@ namespace painters {
         uint32_t            m_alpha_channel;
         std::string         m_file_path;
         QPixmap             m_pixmap;
+    };
+
+    class p_text_component: public p_component_obj, public QGraphicsTextItem {
+    public:
+        p_text_component(const std::string &name= "text"):
+            p_component_obj(p_component_type::Text, name),
+            QGraphicsTextItem(nullptr) {
+            __init__();
+        }
+
+    OVERLOAD_EVENT:
+        OVERLOAD_FUNC;
+
+    EVENT_FROM_SCENE:
+        EVENT_FROM_SCENE_FUNC;
+
+    public:
+        p_op_payload m_payload;
+
+    private:
+        void __init__();
+
+    private:
+        std::string         m_text;
     };
 
 }; //! namespace painters

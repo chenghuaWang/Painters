@@ -216,7 +216,6 @@ namespace painters {
         setRect(tmp_for_set);
         this->update();
         m_dirty = true;
-        m_dirty = true;
     }
 
     std::pair<QPointF, QPointF> p_circle_component::__get_rect_payload__() {
@@ -255,6 +254,36 @@ void p_image_component::press_event_from_scene(const QPointF &_a) {
 
 void p_image_component::release_event_from_scene(const QPointF &_a) {
     this->prepareGeometryChange();
+    this->update();
+}
+
+}
+
+namespace painters {
+
+OVERLOAD_FUNC_IMPL(p_text_component, QGraphicsTextItem);
+
+void p_text_component::__init__() {
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
+}
+
+void p_text_component::move_event_from_scene(const QPointF &_a) {
+    this->update();
+}
+
+void p_text_component::press_event_from_scene(const QPointF &_a) {
+    return;
+}
+
+void p_text_component::release_event_from_scene(const QPointF &_a) {
+    QPointF tmp_center = this->boundingRect().center();
+    this->setPos(tmp_center);
+    QTransform tmp_trans;
+    tmp_trans.translate(-tmp_center.x(), -tmp_center.y());
+    this->setTransformOriginPoint(tmp_center);
+    this->prepareGeometryChange();
+    this->setTransform(tmp_trans);
+    this->setTransformOriginPoint(tmp_center);
     this->update();
 }
 

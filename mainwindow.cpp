@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QFile>
+#include <QSlider>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->toolButton_shape->setIcon(QIcon(":/icon/triangle-circle-shape-brand_icon-icons.com_59117.ico"));
     ui->toolButton_image->setIcon(QIcon(":/icon/icons8-image-64.png"));
     ui->toolButton_select->setIcon(QIcon(":/icon/icons8-select-64.png"));
+    ui->toolButton_text->setIcon(QIcon(":/icon/icons8-text-color-96.png"));
 
     // Signal and slots connection
     connect(&m_brush_inspector, SIGNAL(signal_pen_changed(QPen&)), &m_default_scene, SLOT(slots_brush_pen_changed(QPen&)));
@@ -34,6 +36,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->toolButton_image, SIGNAL(clicked(bool)), &m_default_scene, SLOT(slots_set_tool_type_image(bool)));
     connect(ui->toolButton_select, &QPushButton::clicked, [=](){
         m_default_scene.set_tool_type(painters::tool_type::Select);
+    });
+    connect(ui->toolButton_text, &QPushButton::clicked, [=](){
+        m_default_scene.set_tool_type(painters::tool_type::Text);
+        ui->tabWidget_2->setCurrentIndex(1);
+//        ui->horizontalSlider->setValue(0);
+//        ui->horizontalSlider_2->setValue(0);
+//        ui->horizontalSlider_3->setValue(0);
     });
 
     connect(ui->toolButton_shape, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_shape(bool)));
@@ -142,6 +151,80 @@ MainWindow::MainWindow(QWidget *parent)
     m_image_inspector.set_image_path_editor(ui->lineEdit_image_path);
     m_image_inspector.set_image_get_pushbutton(ui->pushButton_image_add_button);
     m_image_inspector.__init__();
+
+    // connect font inspector
+    connect(ui->fontComboBox, &QFontComboBox::currentFontChanged, [=](const QFont& _a){
+        int r = ui->horizontalSlider->value();
+        int g = ui->horizontalSlider_2->value();
+        int b = ui->horizontalSlider_3->value();
+        QFont tmp = _a;
+        QPalette color;
+        color.setColor(QPalette::WindowText, QColor(r, g, b));
+        tmp.setPixelSize(ui->spinBox_font->value());
+        m_default_scene.slots_text_font_changed(tmp);
+        ui->label_11->setFont(tmp);
+        ui->label_11->setPalette(color);
+        ui->label_12->setFont(tmp);
+        ui->label_12->setPalette(color);
+        ui->label_13->setFont(tmp);
+        ui->label_13->setPalette(color);
+    });
+
+    connect(ui->horizontalSlider, &QSlider::sliderMoved, [=](){
+        int r = ui->horizontalSlider->value();
+        int g = ui->horizontalSlider_2->value();
+        int b = ui->horizontalSlider_3->value();
+        QPalette color;
+        color.setColor(QPalette::WindowText, QColor(r, g, b));
+        ui->label_11->setPalette(color);
+        ui->label_12->setPalette(color);
+        ui->label_13->setPalette(color);
+
+        m_default_scene.slots_text_color_changed(QColor(r,g,b));
+    });
+
+    connect(ui->horizontalSlider_2, &QSlider::sliderMoved, [=](){
+        int r = ui->horizontalSlider->value();
+        int g = ui->horizontalSlider_2->value();
+        int b = ui->horizontalSlider_3->value();
+        QPalette color;
+        color.setColor(QPalette::WindowText, QColor(r, g, b));
+        ui->label_11->setPalette(color);
+        ui->label_12->setPalette(color);
+        ui->label_13->setPalette(color);
+
+        m_default_scene.slots_text_color_changed(QColor(r,g,b));
+    });
+
+    connect(ui->horizontalSlider_3, &QSlider::sliderMoved, [=](){
+        int r = ui->horizontalSlider->value();
+        int g = ui->horizontalSlider_2->value();
+        int b = ui->horizontalSlider_3->value();
+        QPalette color;
+        color.setColor(QPalette::WindowText, QColor(r, g, b));
+        ui->label_11->setPalette(color);
+        ui->label_12->setPalette(color);
+        ui->label_13->setPalette(color);
+
+        m_default_scene.slots_text_color_changed(QColor(r,g,b));
+    });
+
+    connect(ui->spinBox_font, &QSpinBox::valueChanged, [=](int _a){
+        int r = ui->horizontalSlider->value();
+        int g = ui->horizontalSlider_2->value();
+        int b = ui->horizontalSlider_3->value();
+        QFont tmp = ui->fontComboBox->currentFont();
+        QPalette color;
+        color.setColor(QPalette::WindowText, QColor(r, g, b));
+        tmp.setPixelSize(_a);
+        m_default_scene.slots_text_font_changed(tmp);
+        ui->label_11->setFont(tmp);
+        ui->label_11->setPalette(color);
+        ui->label_12->setFont(tmp);
+        ui->label_12->setPalette(color);
+        ui->label_13->setFont(tmp);
+        ui->label_13->setPalette(color);
+    });
 
     // init other inspector TODO.
 
