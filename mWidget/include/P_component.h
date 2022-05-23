@@ -229,6 +229,28 @@ namespace painters {
             m_dirty = false;
         }
 
+        void init_from_base_item(QGraphicsPathItem* item) {
+            this->m_path = item->path();
+            this->setPath(item->path());
+            this->setPen(item->pen());
+            this->setPos(item->pos());
+            this->setTransform(item->transform());
+            this->setScale(item->scale());
+            this->set_selectable(item->isSelected());
+            this->setX(item->x());
+            this->setY(item->y());
+
+            QRectF bound_rect = m_path.boundingRect();
+            m_bounding_box_size = QSize(bound_rect.width(), bound_rect.height());
+            QPointF center_pos = bound_rect.center();
+            this->setPos(center_pos);
+            m_path.translate(-center_pos.x(), -center_pos.y());
+            this->prepareGeometryChange();
+            setPath(m_path);
+            this->update(); // redraw
+            m_dirty = true;
+        }
+
     OVERLOAD_EVENT: ///< below is the inner call, just when this component is selected.
         OVERLOAD_FUNC;
 

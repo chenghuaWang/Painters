@@ -213,6 +213,36 @@ bool p_project_phaser::phase(const std::string &rhs) {
             }
             else if(_component_type == CLASS_TYPE_STR(QGraphicsPixmapItem)) {
                 QGraphicsPixmapItem *item = new QGraphicsPixmapItem();
+
+                /*      Read the image from base64       */
+                QString tmp_data = _component.value("image_data").toString();
+                QPixmap tmp_pixmap;
+                tmp_pixmap.loadFromData(QByteArray::fromBase64(tmp_data.toLocal8Bit()));
+                item->setPixmap(tmp_pixmap);
+
+                /*      Read the position of this item  */
+                QJsonArray pos_tmp = _component.value("position").toArray();
+                QPointF    pos(pos_tmp.at(0).toDouble(), pos_tmp.at(1).toDouble());
+                item->setPos(pos);
+
+                /*      Read the transformation of this item */
+                QJsonArray transform_tmp = _component.value("transform").toArray();
+                QTransform transform;
+                transform.setMatrix(transform_tmp.at(0).toDouble(),
+                                    transform_tmp.at(1).toDouble(),
+                                    transform_tmp.at(2).toDouble(),
+                                    transform_tmp.at(3).toDouble(),
+                                    transform_tmp.at(4).toDouble(),
+                                    transform_tmp.at(5).toDouble(),
+                                    transform_tmp.at(6).toDouble(),
+                                    transform_tmp.at(7).toDouble(),
+                                    transform_tmp.at(8).toDouble());
+                item->setTransform(transform);
+                item->setVisible(true);
+
+                item->setScale(_component.value("scale").toDouble());
+
+                tmp_payload.m_pixmap_item[item] = _component_name;
             }
         }
 
@@ -398,12 +428,41 @@ void p_project_to_json::write_to(const std::string &file_path) {
         }
 
         for (auto &item:m_data[i].m_pixmap_item) {
+            QJsonObject component_obj;
+            component_obj.insert("type", QJsonValue(CLASS_TYPE_STR(QGraphicsPixmapItem)));
+            component_obj.insert("name", QJsonValue(QString::fromStdString(item.second)));
+
             /*          preapre image to base64     */
             QImage tmp_image = item.first->pixmap().toImage();
             QByteArray ba;
             QBuffer buf(&ba);
             tmp_image.save(&buf, "png");
-            qDebug() << ba.toBase64().toStdString().c_str();
+            component_obj.insert("image_data", ba.toBase64().toStdString().c_str());
+
+            QPointF pos_tmp = item.first->pos();
+            QJsonArray pos;
+            pos.append(QJsonValue(pos_tmp.x()));
+            pos.append(QJsonValue(pos_tmp.y()));
+
+            component_obj.insert("position", pos);
+
+            QTransform transform_obj = item.first->transform();
+            QJsonArray transform_tmp;
+            transform_tmp.append(QJsonValue(transform_obj.m11()));
+            transform_tmp.append(QJsonValue(transform_obj.m12()));
+            transform_tmp.append(QJsonValue(transform_obj.m13()));
+            transform_tmp.append(QJsonValue(transform_obj.m21()));
+            transform_tmp.append(QJsonValue(transform_obj.m22()));
+            transform_tmp.append(QJsonValue(transform_obj.m23()));
+            transform_tmp.append(QJsonValue(transform_obj.m31()));
+            transform_tmp.append(QJsonValue(transform_obj.m32()));
+            transform_tmp.append(QJsonValue(transform_obj.m33()));
+
+            component_obj.insert("transform", transform_tmp);
+
+            component_obj.insert("scale", QJsonValue(item.first->scale()));
+
+            layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
         }
 
         rootObj.insert(QString::fromStdString("layer__" + std::to_string(i)), layer_obj);

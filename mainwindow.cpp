@@ -105,7 +105,6 @@ MainWindow::MainWindow(QWidget *parent)
             m_default_scene.m_cur_choosed_layer->m_w = item.width;
             for (auto &path_item: item.m_path_item) {
                 m_default_scene.m_cur_choosed_layer->add_node(path_item.second, path_item.first, "p_brush_component");
-
                 m_default_scene.addItem(path_item.first); //path_item.first
             }
             for (auto &rect_item: item.m_rect_item) {
@@ -117,6 +116,11 @@ MainWindow::MainWindow(QWidget *parent)
                 m_default_scene.m_cur_choosed_layer->add_node(circle_item.second, circle_item.first, "p_circle_component");
 
                 m_default_scene.addItem(circle_item.first); //path_item.first
+            }
+            for (auto &pixmap_item: item.m_pixmap_item) {
+                m_default_scene.m_cur_choosed_layer->add_node(pixmap_item.second, pixmap_item.first, "p_circle_component");
+
+                m_default_scene.addItem(pixmap_item.first); //path_item.first
             }
             /* TODO pixmap, rect, ellipse, other stuff */
         }
