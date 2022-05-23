@@ -126,8 +126,17 @@ namespace painters {
                     if (tmp_layer->m_type_translate_node[item.second] == "p_brush_component") {
                         prepare_component.m_path_item[(QGraphicsPathItem*)item.second] = item.first;
                     }
+                    else if (tmp_layer->m_type_translate_node[item.second] == "p_rect_component"){
+                        prepare_component.m_rect_item[(QGraphicsRectItem*)item.second] = item.first;
+                    }
+                    else if (tmp_layer->m_type_translate_node[item.second] == "p_circle_component"){
+                        prepare_component.m_circle_item[(QGraphicsEllipseItem*)item.second] = item.first;
+                    }
+                    else if (tmp_layer->m_type_translate_node[item.second] == "p_image_component"){
+                        prepare_component.m_pixmap_item[(QGraphicsPixmapItem*)item.second] = item.first;
+                    }
                     else {
-                        // TODO;
+//                        qDebug() << tmp_layer->m_type_translate_node[item.second].c_str();
                     }
                 }
                 writer.m_data.push_back(prepare_component);

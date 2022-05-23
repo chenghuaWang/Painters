@@ -177,6 +177,8 @@ namespace painters {
     public:
         p_shape_inspector(const std::string &name= "shape inspector"): p_inspector(name) {
             m_scene = CREATE_REF(QGraphicsScene)();
+            m_brush.setStyle(Qt::SolidPattern);
+            m_brush.setColor(QColor(0, 0, 0, 0));
         };
 
         REGISTER_FUNC(shape_combobox, QComboBox);

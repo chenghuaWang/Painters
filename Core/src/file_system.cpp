@@ -1,6 +1,7 @@
 #include "file_system.h"
 #include <QFile>
 #include <QTextStream>
+#include <QBuffer>
 
 namespace painters {
 
@@ -99,13 +100,119 @@ bool p_project_phaser::phase(const std::string &rhs) {
                 tmp_payload.m_path_item[item] = _component_name;
             }
             else if(_component_type == CLASS_TYPE_STR(QGraphicsRectItem)) {
+                QGraphicsRectItem *item = new QGraphicsRectItem();
 
+                /*       Read the base rect item info       */
+                QJsonArray tmp_base_points = _component.value("rect_base_pos").toArray();
+                QRectF base_pointd = QRectF(tmp_base_points.at(0).toDouble(),
+                                            tmp_base_points.at(1).toDouble(),
+                                            tmp_base_points.at(2).toDouble(),
+                                            tmp_base_points.at(3).toDouble());
+                item->setRect(base_pointd);
+
+                /*       Read pen color       */
+                QJsonArray pen_color = _component.value("pen_color").toArray();
+                QColor  pen_c(pen_color.at(0).toInt(),
+                        pen_color.at(1).toInt(),
+                        pen_color.at(2).toInt(),
+                        pen_color.at(3).toInt());
+                QPen pen;
+                pen.setStyle(Qt::SolidLine);
+                pen.setWidthF(_component.value("pen_width").toDouble());
+                pen.setColor(pen_c);
+                item->setPen(pen);
+
+                /*      Read the brush      */
+                QJsonArray brush_color = _component.value("brush_color").toArray();
+                QColor  brush_c(brush_color.at(0).toInt(),
+                                brush_color.at(1).toInt(),
+                                brush_color.at(2).toInt(),
+                                brush_color.at(3).toInt());
+                QBrush brush;
+                brush.setColor(brush_c);
+                brush.setStyle(Qt::SolidPattern);
+                item->setBrush(brush);
+
+                /*      Read the position of this item  */
+                QJsonArray pos_tmp = _component.value("position").toArray();
+                QPointF    pos(pos_tmp.at(0).toDouble(), pos_tmp.at(1).toDouble());
+                item->setPos(pos);
+
+                /*      Read the transformation of this item */
+                QJsonArray transform_tmp = _component.value("transform").toArray();
+                QTransform transform;
+                transform.setMatrix(transform_tmp.at(0).toDouble(),
+                                    transform_tmp.at(1).toDouble(),
+                                    transform_tmp.at(2).toDouble(),
+                                    transform_tmp.at(3).toDouble(),
+                                    transform_tmp.at(4).toDouble(),
+                                    transform_tmp.at(5).toDouble(),
+                                    transform_tmp.at(6).toDouble(),
+                                    transform_tmp.at(7).toDouble(),
+                                    transform_tmp.at(8).toDouble());
+                item->setTransform(transform);
+                item->setVisible(true);
+
+                tmp_payload.m_rect_item[item] = _component_name;
             }
             else if(_component_type == CLASS_TYPE_STR(QGraphicsEllipseItem)) {
+                QGraphicsEllipseItem *item = new QGraphicsEllipseItem();
 
+                /*       Read the base rect item info       */
+                QJsonArray tmp_base_points = _component.value("rect_base_pos").toArray();
+                QRectF base_pointd = QRectF(tmp_base_points.at(0).toDouble(),
+                                            tmp_base_points.at(1).toDouble(),
+                                            tmp_base_points.at(2).toDouble(),
+                                            tmp_base_points.at(3).toDouble());
+                item->setRect(base_pointd);
+
+                /*       Read pen color       */
+                QJsonArray pen_color = _component.value("pen_color").toArray();
+                QColor  pen_c(pen_color.at(0).toInt(),
+                        pen_color.at(1).toInt(),
+                        pen_color.at(2).toInt(),
+                        pen_color.at(3).toInt());
+                QPen pen;
+                pen.setStyle(Qt::SolidLine);
+                pen.setWidthF(_component.value("pen_width").toDouble());
+                pen.setColor(pen_c);
+                item->setPen(pen);
+
+                /*      Read the brush      */
+                QJsonArray brush_color = _component.value("brush_color").toArray();
+                QColor  brush_c(brush_color.at(0).toInt(),
+                                brush_color.at(1).toInt(),
+                                brush_color.at(2).toInt(),
+                                brush_color.at(3).toInt());
+                QBrush brush;
+                brush.setColor(brush_c);
+                brush.setStyle(Qt::SolidPattern);
+                item->setBrush(brush);
+
+                /*      Read the position of this item  */
+                QJsonArray pos_tmp = _component.value("position").toArray();
+                QPointF    pos(pos_tmp.at(0).toDouble(), pos_tmp.at(1).toDouble());
+                item->setPos(pos);
+
+                /*      Read the transformation of this item */
+                QJsonArray transform_tmp = _component.value("transform").toArray();
+                QTransform transform;
+                transform.setMatrix(transform_tmp.at(0).toDouble(),
+                                    transform_tmp.at(1).toDouble(),
+                                    transform_tmp.at(2).toDouble(),
+                                    transform_tmp.at(3).toDouble(),
+                                    transform_tmp.at(4).toDouble(),
+                                    transform_tmp.at(5).toDouble(),
+                                    transform_tmp.at(6).toDouble(),
+                                    transform_tmp.at(7).toDouble(),
+                                    transform_tmp.at(8).toDouble());
+                item->setTransform(transform);
+                item->setVisible(true);
+
+                tmp_payload.m_circle_item[item] = _component_name;
             }
             else if(_component_type == CLASS_TYPE_STR(QGraphicsPixmapItem)) {
-
+                QGraphicsPixmapItem *item = new QGraphicsPixmapItem();
             }
         }
 
@@ -183,10 +290,22 @@ void p_project_to_json::write_to(const std::string &file_path) {
             component_obj.insert("type", QJsonValue(CLASS_TYPE_STR(QGraphicsRectItem)));
             component_obj.insert("name", QJsonValue(QString::fromStdString(item.second)));
 
+            QJsonArray rect_base_point;
+            QRectF tmp_rect_base_point = item.first->rect();
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.x()));
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.y()));
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.width()));
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.height()));
+            component_obj.insert("rect_base_pos", rect_base_point);
 
-            /* TODO Add Rect self inner shape. */
             /* TODO Add Brush. */
-
+            QBrush tmp_brush = item.first->brush();
+            QJsonArray brush_color;
+            brush_color.append(QJsonValue(tmp_brush.color().red()));
+            brush_color.append(QJsonValue(tmp_brush.color().green()));
+            brush_color.append(QJsonValue(tmp_brush.color().blue()));
+            brush_color.append(QJsonValue(tmp_brush.color().alpha()));
+            component_obj.insert("brush_color", brush_color);
 
             QColor tmp_color = item.first->pen().color();
             QJsonArray color;
@@ -222,7 +341,70 @@ void p_project_to_json::write_to(const std::string &file_path) {
             layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
         }
 
-        /* For other component */
+        for (auto &item:m_data[i].m_circle_item) {
+            QJsonObject component_obj;
+            component_obj.insert("type", QJsonValue(CLASS_TYPE_STR(QGraphicsEllipseItem)));
+            component_obj.insert("name", QJsonValue(QString::fromStdString(item.second)));
+
+            QJsonArray rect_base_point;
+            QRectF tmp_rect_base_point = item.first->rect();
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.x()));
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.y()));
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.width()));
+            rect_base_point.append(QJsonValue(tmp_rect_base_point.height()));
+            component_obj.insert("rect_base_pos", rect_base_point);
+
+            /* TODO Add Brush. */
+            QBrush tmp_brush = item.first->brush();
+            QJsonArray brush_color;
+            brush_color.append(QJsonValue(tmp_brush.color().red()));
+            brush_color.append(QJsonValue(tmp_brush.color().green()));
+            brush_color.append(QJsonValue(tmp_brush.color().blue()));
+            brush_color.append(QJsonValue(tmp_brush.color().alpha()));
+            component_obj.insert("brush_color", brush_color);
+
+            QColor tmp_color = item.first->pen().color();
+            QJsonArray color;
+            color.append(QJsonValue(tmp_color.red()));
+            color.append(QJsonValue(tmp_color.green()));
+            color.append(QJsonValue(tmp_color.blue()));
+            color.append(QJsonValue(tmp_color.alpha()));
+
+            component_obj.insert("pen_color", color);
+
+            QPointF pos_tmp = item.first->pos();
+            QJsonArray pos;
+            pos.append(QJsonValue(pos_tmp.x()));
+            pos.append(QJsonValue(pos_tmp.y()));
+
+            component_obj.insert("position", pos);
+
+            QTransform transform_obj = item.first->transform();
+            QJsonArray transform_tmp;
+            transform_tmp.append(QJsonValue(transform_obj.m11()));
+            transform_tmp.append(QJsonValue(transform_obj.m12()));
+            transform_tmp.append(QJsonValue(transform_obj.m13()));
+            transform_tmp.append(QJsonValue(transform_obj.m21()));
+            transform_tmp.append(QJsonValue(transform_obj.m22()));
+            transform_tmp.append(QJsonValue(transform_obj.m23()));
+            transform_tmp.append(QJsonValue(transform_obj.m31()));
+            transform_tmp.append(QJsonValue(transform_obj.m32()));
+            transform_tmp.append(QJsonValue(transform_obj.m33()));
+
+            component_obj.insert("transform", transform_tmp);
+            component_obj.insert("pen_width", item.first->pen().widthF());
+
+            layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
+        }
+
+        for (auto &item:m_data[i].m_pixmap_item) {
+            /*          preapre image to base64     */
+            QImage tmp_image = item.first->pixmap().toImage();
+            QByteArray ba;
+            QBuffer buf(&ba);
+            tmp_image.save(&buf, "png");
+            qDebug() << ba.toBase64().toStdString().c_str();
+        }
 
         rootObj.insert(QString::fromStdString("layer__" + std::to_string(i)), layer_obj);
     }

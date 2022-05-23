@@ -74,8 +74,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSave_Files, &QAction::triggered, [=](){
         if (m_saved_file_path.isEmpty()) {
             m_saved_file_path = QFileDialog::getSaveFileName(this, "Save Project", "C:", "Project File (*.projectp)");
+            m_saved_file_path += ".projectp";
         }
-        m_saved_file_path += ".projectp";
         m_default_scene.m_layer_stack.rewrite_to_file(m_saved_file_path.toStdString());
     });
 
@@ -107,6 +107,16 @@ MainWindow::MainWindow(QWidget *parent)
                 m_default_scene.m_cur_choosed_layer->add_node(path_item.second, path_item.first, "p_brush_component");
 
                 m_default_scene.addItem(path_item.first); //path_item.first
+            }
+            for (auto &rect_item: item.m_rect_item) {
+                m_default_scene.m_cur_choosed_layer->add_node(rect_item.second, rect_item.first, "p_rect_component");
+
+                m_default_scene.addItem(rect_item.first); //path_item.first
+            }
+            for (auto &circle_item: item.m_circle_item) {
+                m_default_scene.m_cur_choosed_layer->add_node(circle_item.second, circle_item.first, "p_circle_component");
+
+                m_default_scene.addItem(circle_item.first); //path_item.first
             }
             /* TODO pixmap, rect, ellipse, other stuff */
         }

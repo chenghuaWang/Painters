@@ -109,6 +109,14 @@ namespace painters {
             m_cur_choosed_layer->set_zbuffer(0);
             m_layer_stack.push_layer(m_cur_choosed_layer);
             m_s_instance = this;
+
+            m_cur_rect_brush.setColor(QColor(0, 0, 0, 0));
+            m_cur_rect_brush.setStyle(Qt::SolidPattern);
+            m_cur_rect_pen.setColor(QColor(0, 0, 0, 255));
+
+            m_cur_circle_brush.setColor(QColor(0, 0, 0, 0));
+            m_cur_circle_brush.setStyle(Qt::SolidPattern);
+            m_cur_circle_pen.setColor(QColor(0, 0, 0, 255));
         }
 
         ~p_canvas() {
