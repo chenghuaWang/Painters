@@ -265,6 +265,14 @@ MainWindow::MainWindow(QWidget *parent)
     // init the scene
     m_default_scene.set_tool_type(painters::tool_type::None);
     ui->tabWidget_2->setCurrentIndex(0);
+
+    /*      write to logger     */
+    LOG_INFO("Start main thread");
+    LOG_INFO("Create window with default width  " + std::to_string(this->rect().width()));
+    LOG_INFO("Create window with default height  " + std::to_string(this->rect().height()));
+    LOG_INFO("Create canvas with default width  " + std::to_string(m_default_scene.width()));
+    LOG_INFO("Create canvas with default height  " + std::to_string(m_default_scene.height()));
+    LOG_BUFFER_FLUSH;
 }
 
 void MainWindow::slots_tree_node_update() {

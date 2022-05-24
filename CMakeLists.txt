@@ -78,7 +78,7 @@ add_subdirectory(Core)
 add_subdirectory(mWidget)
 add_subdirectory(Editor)
 target_link_libraries(Painters PRIVATE Qt${QT_VERSION_MAJOR}::Widgets p_core p_m_widget p_editor)
-target_link_libraries(Painters PRIVATE Qt6::OpenGLWidgets)
+target_link_libraries(Painters PRIVATE Qt6::OpenGLWidgets spdlog)
 
 set_target_properties(Painters PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

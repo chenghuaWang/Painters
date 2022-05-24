@@ -11,6 +11,8 @@
 #include "p_inspector.h"
 #include "P_layer_manage.h"
 
+#include "log_system.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -46,8 +48,11 @@ private:
     QString                         m_saved_file_path;
 
 private:
-    painters::p_graphic_view *gv = new painters::p_graphic_view();
-    Ui::MainWindow  *ui;
-    painters::p_canvas  m_default_scene;
+    painters::p_graphic_view        *gv = new painters::p_graphic_view();
+    Ui::MainWindow                  *ui;
+    painters::p_canvas              m_default_scene;
+
+    ///< create a single mode log system. only exist one time.
+    p_logger                        m_logger;
 };
 #endif // MAINWINDOW_H
