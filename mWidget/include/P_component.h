@@ -236,15 +236,13 @@ namespace painters {
             this->setPos(item->pos());
             this->setTransform(item->transform());
             this->setScale(item->scale());
-            this->set_selectable(item->isSelected());
+            this->__init__();
             this->setX(item->x());
             this->setY(item->y());
 
-            QRectF bound_rect = m_path.boundingRect();
-            m_bounding_box_size = QSize(bound_rect.width(), bound_rect.height());
-            QPointF center_pos = bound_rect.center();
-            this->setPos(center_pos);
-            m_path.translate(-center_pos.x(), -center_pos.y());
+            // noneed to set origin to center bounding box.
+            // previous project item has already did it.
+
             this->prepareGeometryChange();
             setPath(m_path);
             this->update(); // redraw
@@ -321,6 +319,25 @@ namespace painters {
             __init__();
         }
 
+        void init_from_base_item(QGraphicsRectItem* item) {
+            this->setBrush(item->brush());
+            this->setRect(item->rect());
+            this->setPen(item->pen());
+            this->setPos(item->pos());
+            this->setTransform(item->transform());
+            this->setScale(item->scale());
+            this->__init__();
+            this->setX(item->x());
+            this->setY(item->y());
+
+            // noneed to set origin to center bounding box.
+            // previous project item has already did it.
+
+            this->prepareGeometryChange();
+            this->update(); // redraw
+            m_dirty = true;
+        }
+
         void __init__();
 
     OVERLOAD_EVENT:
@@ -395,6 +412,25 @@ namespace painters {
             setBrush(m_brush);
             __init__();
             m_dirty = false;
+        }
+
+        void init_from_base_item(QGraphicsEllipseItem* item) {
+            this->setBrush(item->brush());
+            this->setRect(item->rect());
+            this->setPen(item->pen());
+            this->setPos(item->pos());
+            this->setTransform(item->transform());
+            this->setScale(item->scale());
+            this->__init__();
+            this->setX(item->x());
+            this->setY(item->y());
+
+            // noneed to set origin to center bounding box.
+            // previous project item has already did it.
+
+            this->prepareGeometryChange();
+            this->update(); // redraw
+            m_dirty = true;
         }
 
         void __init__();
@@ -480,6 +516,24 @@ namespace painters {
             setPixmap(m_pixmap);
             this->update();
         }
+
+        void init_from_base_item(QGraphicsPixmapItem* item) {
+            this->setPixmap(item->pixmap());
+            this->setPos(item->pos());
+            this->setTransform(item->transform());
+            this->setScale(item->scale());
+            this->__init__();
+            this->setX(item->x());
+            this->setY(item->y());
+
+            // noneed to set origin to center bounding box.
+            // previous project item has already did it.
+
+            this->prepareGeometryChange();
+            this->update(); // redraw
+//            m_dirty = true;
+        }
+
 
     private:
         void __init__();

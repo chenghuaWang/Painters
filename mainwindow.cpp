@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSave_Files, &QAction::triggered, [=](){
         if (m_saved_file_path.isEmpty()) {
             m_saved_file_path = QFileDialog::getSaveFileName(this, "Save Project", "C:", "Project File (*.projectp)");
-            m_saved_file_path += ".projectp";
+//            m_saved_file_path += ".projectp";
         }
         m_default_scene.m_layer_stack.rewrite_to_file(m_saved_file_path.toStdString());
     });
@@ -104,23 +104,42 @@ MainWindow::MainWindow(QWidget *parent)
             m_default_scene.m_cur_choosed_layer->m_h = item.height;
             m_default_scene.m_cur_choosed_layer->m_w = item.width;
             for (auto &path_item: item.m_path_item) {
-                m_default_scene.m_cur_choosed_layer->add_node(path_item.second, path_item.first, "p_brush_component");
-                m_default_scene.addItem(path_item.first); //path_item.first
+                painters::p_brush_component *tmp_brush = new painters::p_brush_component;
+                tmp_brush->init_from_base_item(path_item.first);
+
+                m_default_scene.m_cur_choosed_layer->add_node(path_item.second, tmp_brush, "p_brush_component");
+                m_default_scene.addItem(tmp_brush); //path_item.first
+
+                // delete the first pointer in every map item
+                delete path_item.first;
             }
             for (auto &rect_item: item.m_rect_item) {
-                m_default_scene.m_cur_choosed_layer->add_node(rect_item.second, rect_item.first, "p_rect_component");
+                painters::p_rect_component *tmp_rect = new painters::p_rect_component();
+                tmp_rect->init_from_base_item(rect_item.first);
 
-                m_default_scene.addItem(rect_item.first); //path_item.first
+                m_default_scene.m_cur_choosed_layer->add_node(rect_item.second, tmp_rect, "p_rect_component");
+                m_default_scene.addItem(tmp_rect); //path_item.first
+
+                // delete the first pointer in every map item
+                delete rect_item.first;
             }
             for (auto &circle_item: item.m_circle_item) {
-                m_default_scene.m_cur_choosed_layer->add_node(circle_item.second, circle_item.first, "p_circle_component");
+                painters::p_circle_component *tmp_circle = new painters::p_circle_component();
+                tmp_circle->init_from_base_item(circle_item.first);
 
-                m_default_scene.addItem(circle_item.first); //path_item.first
+                m_default_scene.m_cur_choosed_layer->add_node(circle_item.second, tmp_circle, "p_circle_component");
+                m_default_scene.addItem(tmp_circle); //path_item.first
+
+                delete circle_item.first;
             }
             for (auto &pixmap_item: item.m_pixmap_item) {
-                m_default_scene.m_cur_choosed_layer->add_node(pixmap_item.second, pixmap_item.first, "p_circle_component");
+                painters::p_image_component *tmp_image = new painters::p_image_component();
+                tmp_image->init_from_base_item(pixmap_item.first);
 
-                m_default_scene.addItem(pixmap_item.first); //path_item.first
+                m_default_scene.m_cur_choosed_layer->add_node(pixmap_item.second, tmp_image, "p_circle_component");
+                m_default_scene.addItem(tmp_image); //path_item.first
+
+                delete pixmap_item.first;
             }
             /* TODO pixmap, rect, ellipse, other stuff */
         }
