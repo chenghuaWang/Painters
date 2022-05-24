@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->toolButton_pen, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_pen(bool)));
     connect(ui->toolButton_image, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_image(bool)));
 
+    connect(&m_default_scene, SIGNAL(signal_item_selected_changed()), this, SLOT(slost_change_choosed_component_attribute()));
 
     connect(ui->comboBox_shape, SIGNAL(currentTextChanged(const QString&)), this, SLOT(slots_change_shape_type(const QString&)));
 
@@ -361,6 +362,21 @@ void MainWindow::slots_change_shape_to_rect() {
 
 void MainWindow::slots_change_shape_to_circle() {
     m_default_scene.set_tool_type(painters::tool_type::Circle);
+}
+
+void MainWindow::slost_change_choosed_component_attribute() {
+    QGraphicsItem *tmp = m_default_scene.m_choosed_for_select;
+
+    if (!tmp) return;
+
+    ui->doubleSpinBox_4->setValue(tmp->rotation()); ///< Rotate
+    ui->doubleSpinBox_4->setDisabled(true);
+
+    ui->doubleSpinBox_5->setValue(tmp->boundingRect().center().x());
+    ui->doubleSpinBox_6->setValue(tmp->boundingRect().center().y());
+
+    ui->doubleSpinBox_5->setDisabled(true);
+    ui->doubleSpinBox_6->setDisabled(true);
 }
 
 MainWindow::~MainWindow()

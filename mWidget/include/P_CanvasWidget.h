@@ -187,6 +187,7 @@ namespace painters {
 
     signals:
         void signal_update_layer_tree();
+        void signal_item_selected_changed();
 
     public slots:
         void slots_brush_pen_changed(QPen &_a);
@@ -253,13 +254,16 @@ namespace painters {
         QTransform          m_rotate_transform;
         qreal               m_rotate_accumulate = 0.0;
         QPointF             m_select_pos;
-        QGraphicsItem       *m_choosed_for_select = nullptr;
+        QGraphicsItem       *m_choosed_for_select = nullptr; ///< droped
         p_op_type           m_op_type = p_op_type::None;
         qreal cauculate_distance(const QPointF &_a, const QPointF &_b) {
             qreal x = _a.x() - _b.x();
             qreal y = _a.y() - _b.y();
             return qSqrt(x*x + y*y);
         }
+
+    public:
+        QGraphicsItem       *m_cur_choosed_item = nullptr;
 
     public: /// Layer manager
         REF(p_graphic_layer)    m_cur_choosed_layer;

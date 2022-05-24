@@ -1,5 +1,6 @@
 #include "P_CanvasWidget.h"
 #include <QInputDialog>
+#include <QMessageBox>
 
 namespace painters {
 
@@ -29,8 +30,14 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
                 event->modifiers() != Qt::ShiftModifier) {
             if (_a.x() < 0 || _a.x() > m_scene_size.width()) break;
             if (_a.y() < 0 || _a.y() > m_scene_size.height()) break;
+
+            if (m_cur_image_string.empty()) {
+                QMessageBox::warning(nullptr, "The image path is empty", "The image path is empty");
+                QGraphicsScene::mousePressEvent(event);
+                return;
+            }
+
             m_cur_image_enable = true;
-//            m_cur_image_string = "D:/Imgs/ke.jpg";
             m_cur_image = new p_image_component(m_cur_image_string, __combine_name__(m_cur_image_cnt));
             m_cur_image->press_event_from_scene(_a);
             addItem(m_cur_image);
@@ -78,6 +85,8 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             QTransform transform;
             m_choosed_for_select = this->itemAt(_a, transform);
             m_choosed_for_select->setSelected(false);
+
+            emit signal_item_selected_changed(); ///< emit to MainWindow. To update component aattribute.
 
             if (m_choosed_for_select != nullptr && m_cur_choosed_layer->has_node(m_choosed_for_select)) {
                 m_choosed_for_select->setSelected(true);
@@ -161,6 +170,7 @@ void p_canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 
     if (m_cur_tool == tool_type::Select) {
+        emit signal_item_selected_changed(); ///< emit to MainWindow. To update component aattribute.
         if (m_op_type == p_op_type::Resize) {
             QPointF scene_pos = event->scenePos();
             QPointF local_pos = event->pos();
@@ -207,6 +217,7 @@ void p_canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
             m_choosed_for_select->setSelected(true);
             this->update();
         }
+        // emit signal_item_selected_changed(); ///< emit to MainWindow. To update component aattribute.
     }
 
     // broadcast this event to other component. TODO
@@ -234,6 +245,7 @@ void p_canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         m_op_type = p_op_type::None;
         m_rotate_accumulate = 0;
         m_rotate_transform.reset();
+        // emit signal_item_selected_changed(); ///< emit to MainWindow. To update component aattribute.
         break;
     case tool_type::Effect:
         break;

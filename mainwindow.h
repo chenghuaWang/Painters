@@ -38,6 +38,8 @@ public slots:
 
     void slots_change_shape_type(const QString& _a);
 
+    void slost_change_choosed_component_attribute();
+
 private:
     painters::p_brush_inspector     m_brush_inspector;
     painters::p_layer_inspector     m_layer_inspector;

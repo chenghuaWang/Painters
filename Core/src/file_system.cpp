@@ -97,6 +97,10 @@ bool p_project_phaser::phase(const std::string &rhs) {
                                     transform_tmp.at(8).toDouble());
                 item->setTransform(transform);
                 item->setVisible(true);
+
+                item->setScale(_component.value("scale").toDouble());
+                item->setRotation(_component.value("rotate").toDouble());
+
                 tmp_payload.m_path_item[item] = _component_name;
             }
             else if(_component_type == CLASS_TYPE_STR(QGraphicsRectItem)) {
@@ -152,6 +156,9 @@ bool p_project_phaser::phase(const std::string &rhs) {
                                     transform_tmp.at(8).toDouble());
                 item->setTransform(transform);
                 item->setVisible(true);
+
+                item->setScale(_component.value("scale").toDouble());
+                item->setRotation(_component.value("rotate").toDouble());
 
                 tmp_payload.m_rect_item[item] = _component_name;
             }
@@ -209,6 +216,9 @@ bool p_project_phaser::phase(const std::string &rhs) {
                 item->setTransform(transform);
                 item->setVisible(true);
 
+                item->setScale(_component.value("scale").toDouble());
+                item->setRotation(_component.value("rotate").toDouble());
+
                 tmp_payload.m_circle_item[item] = _component_name;
             }
             else if(_component_type == CLASS_TYPE_STR(QGraphicsPixmapItem)) {
@@ -241,6 +251,7 @@ bool p_project_phaser::phase(const std::string &rhs) {
                 item->setVisible(true);
 
                 item->setScale(_component.value("scale").toDouble());
+                item->setRotation(_component.value("rotate").toDouble());
 
                 tmp_payload.m_pixmap_item[item] = _component_name;
             }
@@ -312,6 +323,9 @@ void p_project_to_json::write_to(const std::string &file_path) {
             component_obj.insert("transform", transform_tmp);
             component_obj.insert("pen_width", item.first->pen().widthF());
 
+            component_obj.insert("scale", QJsonValue(item.first->scale()));
+            component_obj.insert("rotate", QJsonValue(item.first->rotation()));
+
             layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
         }
 
@@ -367,6 +381,9 @@ void p_project_to_json::write_to(const std::string &file_path) {
 
             component_obj.insert("transform", transform_tmp);
             component_obj.insert("pen_width", item.first->pen().widthF());
+
+            component_obj.insert("scale", QJsonValue(item.first->scale()));
+            component_obj.insert("rotate", QJsonValue(item.first->rotation()));
 
             layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
         }
@@ -424,6 +441,9 @@ void p_project_to_json::write_to(const std::string &file_path) {
             component_obj.insert("transform", transform_tmp);
             component_obj.insert("pen_width", item.first->pen().widthF());
 
+            component_obj.insert("scale", QJsonValue(item.first->scale()));
+            component_obj.insert("rotate", QJsonValue(item.first->rotation()));
+
             layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
         }
 
@@ -461,6 +481,7 @@ void p_project_to_json::write_to(const std::string &file_path) {
             component_obj.insert("transform", transform_tmp);
 
             component_obj.insert("scale", QJsonValue(item.first->scale()));
+            component_obj.insert("rotate", QJsonValue(item.first->rotation()));
 
             layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
         }
