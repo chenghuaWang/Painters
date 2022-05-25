@@ -137,10 +137,19 @@ MainWindow::MainWindow(QWidget *parent)
                 painters::p_image_component *tmp_image = new painters::p_image_component();
                 tmp_image->init_from_base_item(pixmap_item.first);
 
-                m_default_scene.m_cur_choosed_layer->add_node(pixmap_item.second, tmp_image, "p_circle_component");
+                m_default_scene.m_cur_choosed_layer->add_node(pixmap_item.second, tmp_image, "p_image_component");
                 m_default_scene.addItem(tmp_image); //path_item.first
 
                 delete pixmap_item.first;
+            }
+            for (auto &text_item: item.m_text_item) {
+                painters::p_text_component *tmp_text = new painters::p_text_component();
+                tmp_text->init_from_base_item(text_item.first);
+
+                m_default_scene.m_cur_choosed_layer->add_node(text_item.second, tmp_text, "p_text_component");
+                m_default_scene.addItem(tmp_text); //path_item.first
+
+                delete text_item.first;
             }
             /* TODO pixmap, rect, ellipse, other stuff */
         }

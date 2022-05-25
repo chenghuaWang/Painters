@@ -135,6 +135,9 @@ namespace painters {
                     else if (tmp_layer->m_type_translate_node[item.second] == "p_image_component"){
                         prepare_component.m_pixmap_item[(QGraphicsPixmapItem*)item.second] = item.first;
                     }
+                    else if (tmp_layer->m_type_translate_node[item.second] == "p_text_component") {
+                        prepare_component.m_text_item[(QGraphicsTextItem*)item.second] = item.first;
+                    }
                     else {
 //                        qDebug() << tmp_layer->m_type_translate_node[item.second].c_str();
                     }

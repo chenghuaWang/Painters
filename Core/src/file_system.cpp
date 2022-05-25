@@ -255,6 +255,48 @@ bool p_project_phaser::phase(const std::string &rhs) {
 
                 tmp_payload.m_pixmap_item[item] = _component_name;
             }
+            else if(_component_type == CLASS_TYPE_STR(QGraphicsTextItem)) {
+                QGraphicsTextItem *item = new QGraphicsTextItem();
+
+                QJsonArray text_color = _component.value("color").toArray();
+                QColor color(text_color.at(0).toInt(),
+                             text_color.at(1).toInt(),
+                             text_color.at(2).toInt(),
+                             text_color.at(3).toInt());
+                item->setDefaultTextColor(color);
+
+                item->setPlainText(_component.value("plain_string").toString());
+                item->setTextWidth(_component.value("text_size").toDouble());
+
+                QFont tmp_font;
+                tmp_font.fromString(_component.value("font_type").toString());
+                item->setFont(tmp_font);
+
+                /*      Read the position of this item  */
+                QJsonArray pos_tmp = _component.value("position").toArray();
+                QPointF    pos(pos_tmp.at(0).toDouble(), pos_tmp.at(1).toDouble());
+                item->setPos(pos);
+
+                /*      Read the transformation of this item */
+                QJsonArray transform_tmp = _component.value("transform").toArray();
+                QTransform transform;
+                transform.setMatrix(transform_tmp.at(0).toDouble(),
+                                    transform_tmp.at(1).toDouble(),
+                                    transform_tmp.at(2).toDouble(),
+                                    transform_tmp.at(3).toDouble(),
+                                    transform_tmp.at(4).toDouble(),
+                                    transform_tmp.at(5).toDouble(),
+                                    transform_tmp.at(6).toDouble(),
+                                    transform_tmp.at(7).toDouble(),
+                                    transform_tmp.at(8).toDouble());
+                item->setTransform(transform);
+                item->setVisible(true);
+
+                item->setScale(_component.value("scale").toDouble());
+                item->setRotation(_component.value("rotate").toDouble());
+
+                tmp_payload.m_text_item[item] = _component_name;
+            }
         }
 
         m_layers_payload.push_back(tmp_payload);
@@ -458,6 +500,55 @@ void p_project_to_json::write_to(const std::string &file_path) {
             QBuffer buf(&ba);
             tmp_image.save(&buf, "png");
             component_obj.insert("image_data", ba.toBase64().toStdString().c_str());
+
+            QPointF pos_tmp = item.first->pos();
+            QJsonArray pos;
+            pos.append(QJsonValue(pos_tmp.x()));
+            pos.append(QJsonValue(pos_tmp.y()));
+
+            component_obj.insert("position", pos);
+
+            QTransform transform_obj = item.first->transform();
+            QJsonArray transform_tmp;
+            transform_tmp.append(QJsonValue(transform_obj.m11()));
+            transform_tmp.append(QJsonValue(transform_obj.m12()));
+            transform_tmp.append(QJsonValue(transform_obj.m13()));
+            transform_tmp.append(QJsonValue(transform_obj.m21()));
+            transform_tmp.append(QJsonValue(transform_obj.m22()));
+            transform_tmp.append(QJsonValue(transform_obj.m23()));
+            transform_tmp.append(QJsonValue(transform_obj.m31()));
+            transform_tmp.append(QJsonValue(transform_obj.m32()));
+            transform_tmp.append(QJsonValue(transform_obj.m33()));
+
+            component_obj.insert("transform", transform_tmp);
+
+            component_obj.insert("scale", QJsonValue(item.first->scale()));
+            component_obj.insert("rotate", QJsonValue(item.first->rotation()));
+
+            layer_obj.insert(QString::fromStdString("component__" + std::to_string(component_cnt ++)), component_obj);
+        }
+
+        for (auto &item:m_data[i].m_text_item) {
+            QJsonObject component_obj;
+            component_obj.insert("type", QJsonValue(CLASS_TYPE_STR(QGraphicsTextItem)));
+            component_obj.insert("name", QJsonValue(QString::fromStdString(item.second)));
+
+            QString tmp_plain_color = item.first->toPlainText();
+            component_obj.insert("plain_string", QJsonValue(tmp_plain_color));
+
+            component_obj.insert("text_size", QJsonValue(item.first->textWidth()));
+
+            QFont tmp_text_font = item.first->font();
+            component_obj.insert("font_type", QJsonValue(tmp_text_font.toString()));
+
+            QColor tmp_color = item.first->defaultTextColor();
+            QJsonArray color;
+            color.append(QJsonValue(tmp_color.red()));
+            color.append(QJsonValue(tmp_color.green()));
+            color.append(QJsonValue(tmp_color.blue()));
+            color.append(QJsonValue(tmp_color.alpha()));
+
+            component_obj.insert("color", color);
 
             QPointF pos_tmp = item.first->pos();
             QJsonArray pos;

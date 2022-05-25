@@ -43,6 +43,7 @@ namespace painters {
         std::map<QGraphicsRectItem*, std::string> m_rect_item;
         std::map<QGraphicsEllipseItem*, std::string> m_circle_item;
         std::map<QGraphicsPixmapItem*, std::string> m_pixmap_item;
+        std::map<QGraphicsTextItem*, std::string> m_text_item;
     };
 
     struct json_phase_payload {

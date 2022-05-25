@@ -64,7 +64,7 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             m_cur_text->press_event_from_scene(_a);
             m_cur_text->setDefaultTextColor(m_cur_text_color);
             addItem(m_cur_text);
-            m_cur_choosed_layer->add_node(m_cur_text->get_name(), m_cur_text, "QGraphicsTextItem");
+            m_cur_choosed_layer->add_node(m_cur_text->get_name(), m_cur_text, "p_text_component");
             emit signal_update_layer_tree();
         }
         break;

@@ -561,6 +561,26 @@ namespace painters {
             __init__();
         }
 
+        void init_from_base_item(QGraphicsTextItem* item) {
+            this->setPos(item->pos());
+            this->setTransform(item->transform());
+            this->setScale(item->scale());
+            this->__init__();
+            this->setX(item->x());
+            this->setY(item->y());
+
+            this->setFont(item->font());
+            this->setTextWidth(item->textWidth());
+            this->setDefaultTextColor(item->defaultTextColor());
+            this->setPlainText(item->toPlainText());
+
+            // noneed to set origin to center bounding box.
+            // previous project item has already did it.
+
+            this->prepareGeometryChange();
+            this->update(); // redraw
+        }
+
     OVERLOAD_EVENT:
         OVERLOAD_FUNC;
 
