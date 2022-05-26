@@ -971,10 +971,12 @@ over the lazy dog</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNew_Project"/>
+   <addaction name="actionOpen_Project"/>
    <addaction name="actionSave_Files"/>
    <addaction name="actionAdd_new_layer"/>
    <addaction name="actionExport_Files"/>
+   <addaction name="actionNew_Project"/>
+   <addaction name="actionabout"/>
   </widget>
   <action name="actionNew_Project">
    <property name="icon">
@@ -992,6 +994,10 @@ over the lazy dog</string>
    </property>
   </action>
   <action name="actionOpen_Project">
+   <property name="icon">
+    <iconset resource="icon_bind.qrc">
+     <normaloff>:/icon/icons8-open-file-folder-96.png</normaloff>:/icon/icons8-open-file-folder-96.png</iconset>
+   </property>
    <property name="text">
     <string>Open Project</string>
    </property>
@@ -1035,6 +1041,10 @@ over the lazy dog</string>
    </property>
   </action>
   <action name="actionabout">
+   <property name="icon">
+    <iconset resource="icon_bind.qrc">
+     <normaloff>:/icon/icons8-about-100.png</normaloff>:/icon/icons8-about-100.png</iconset>
+   </property>
    <property name="text">
     <string>about</string>
    </property>

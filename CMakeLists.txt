@@ -30,6 +30,7 @@ set(PROJECT_SOURCES
         ${TS_FILES}
         theme/style.qrc
         icon_bind.qrc
+        about_window.h about_window.cpp about_window.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

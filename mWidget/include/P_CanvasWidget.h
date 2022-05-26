@@ -36,7 +36,7 @@
             event->modifiers() != Qt::ShiftModifier) { \
         if (_a.x() < 0 || _a.x() > m_scene_size.width()) break; \
         if (_a.y() < 0 || _a.y() > m_scene_size.height()) break; \
-        if (m_cur_choosed_layer->m_locked) { \
+        if (m_cur_choosed_layer && m_cur_choosed_layer->m_locked) { \
             QMessageBox::critical(nullptr, "Layer is locked", "free the layer before draw!!!"); \
             break; \
         } \
@@ -45,6 +45,11 @@
         other_sentence;\
         object_ptr->press_event_from_scene(_a); \
         addItem(object_ptr); \
+        if (!m_cur_choosed_layer) {\
+            m_cur_choosed_layer.reset();\
+            m_cur_choosed_layer = CREATE_REF(p_graphic_layer)("untitled layer 1");\
+            m_layer_stack.push_layer(m_cur_choosed_layer);\
+        }\
         m_cur_choosed_layer->add_node(object_ptr->get_name(), object_ptr, #object_type); \
     } \
 

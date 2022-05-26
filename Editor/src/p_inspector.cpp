@@ -152,6 +152,7 @@ void p_layer_inspector::__init__() {
 }
 
 void p_layer_inspector::slots_update_layer_widget(REF(p_graphic_layer)& _a) {
+    if (!_a) return;
     m_name_editor->setText(_a->get_name().c_str());
     QString tmp(std::string(std::to_string(_a->get_w()) + " x " + std::to_string(_a->get_h())).c_str());
     m_size_editor->setText(tmp);

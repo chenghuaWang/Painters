@@ -12,6 +12,13 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    m_about_window = new about_window();
+    m_about_window->setWindowModality(Qt::WindowModal);
+
+
+    connect(ui->actionabout, &QAction::triggered, [=](){
+        m_about_window->show();
+    });
 
     // set reference line
     ui->comboBox_reference->addItem("None");
@@ -275,6 +282,80 @@ MainWindow::MainWindow(QWidget *parent)
     // init the scene
     m_default_scene.set_tool_type(painters::tool_type::None);
     ui->tabWidget_2->setCurrentIndex(0);
+    ui->treeWidget->setItemsExpandable(true);
+
+    /*      Right click for treeview component      */
+    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->treeWidget, &QTreeWidget::customContextMenuRequested, [=](const QPoint &_point){
+        m_treewdiget_item = ui->treeWidget->itemAt(_point); ///< no need to delete it in this function.
+
+        m_tree_menu->addAction(m_delete_layer_action);
+        m_tree_menu->addAction(m_delete_component_action);
+
+        m_tree_menu->move(ui->treeWidget->cursor().pos());
+        m_tree_menu->show();
+    });
+
+    connect(ui->treeWidget, &QTreeWidget::itemClicked, [=](QTreeWidgetItem*rhs, int col){
+        QString tmp_string = rhs->text(col);
+        for (auto &item_ptr: m_default_scene.m_layer_stack){
+            for (auto &component_item: item_ptr->m_nodes) {
+                if (component_item.first == tmp_string.toStdString()){
+                    if (!item_ptr->m_locked) {
+                        component_item.second->setSelected(true);
+                        m_default_scene.set_tool_type(painters::tool_type::Select);
+                        m_default_scene.m_cur_choosed_item = component_item.second;
+                    }
+                }
+            }
+        }
+    });
+
+    connect(this->m_delete_layer_action, &QAction::triggered, [=](){
+        if (!m_treewdiget_item) return;
+        QString tmp_component_string = m_treewdiget_item->text(0);
+//        qDebug() << tmp_component_string;
+        if (m_default_scene.m_layer_stack.m_layer_stack.empty()) return;
+        for (auto &item_ptr: m_default_scene.m_layer_stack){
+            if (item_ptr->get_name() == tmp_component_string.toStdString()) {
+                for(auto &component_item: item_ptr->m_nodes) {
+                    m_default_scene.removeItem(component_item.second);
+//                    item_ptr->delete_node(component_item.second);
+                }
+                m_default_scene.m_layer_stack.pop_layer(item_ptr);
+                break;
+            }
+        }
+
+        if (m_default_scene.m_layer_stack.m_layer_stack.empty()) {
+            m_default_scene.m_cur_choosed_layer.reset();
+            m_default_scene.m_cur_choosed_layer = nullptr;
+        } else {
+            m_default_scene.m_cur_choosed_layer.reset();
+            m_default_scene.m_cur_choosed_layer = m_default_scene.m_layer_stack.m_layer_stack.back();
+        }
+
+        slots_tree_node_update();
+
+        m_treewdiget_item = nullptr;
+    });
+
+    connect(this->m_delete_component_action, &QAction::triggered, [=](){
+        if (!m_treewdiget_item) return;
+        QString tmp_component_string = m_treewdiget_item->text(0);
+//        qDebug() << tmp_component_string;
+        for (auto &item_ptr: m_default_scene.m_layer_stack) {
+            for (auto &component_item: item_ptr->m_nodes) {
+                if (component_item.first == tmp_component_string.toStdString()) {
+                    m_default_scene.removeItem(component_item.second);
+                    item_ptr->delete_node(component_item.second);
+                    slots_tree_node_update();
+                    return;
+                }
+            }
+        }
+        m_treewdiget_item = nullptr;
+    });
 
     /*      write to logger     */
     LOG_INFO("Start main thread");
@@ -304,6 +385,7 @@ void MainWindow::slots_tree_node_update() {
         }
     }
     ui->treeWidget->show();
+    ui->treeWidget->expandAll();
 
     m_layer_inspector.slots_update_layer_widget(m_default_scene.m_cur_choosed_layer);
 }
@@ -388,8 +470,20 @@ void MainWindow::slost_change_choosed_component_attribute() {
     ui->doubleSpinBox_6->setDisabled(true);
 }
 
+void MainWindow::slot_action_delete_layer(QTreeWidgetItem* rhs) {
+
+}
+
+void MainWindow::slot_action_delete_component(QTreeWidgetItem* rhs) {
+
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
     delete gv;
+    delete m_about_window;
+    delete m_delete_layer_action;
+    delete m_delete_component_action;
+    delete m_tree_menu;
 }
