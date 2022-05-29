@@ -38,7 +38,17 @@ I will upload the binary package soon. The code is compiled on windows10 with Qt
 
 ##  What can this simple painter do ?
 
+There r some sampels in `./test_samples` directory. You can open those samples by this painter. The sampels are also shown below.
 
+![head_samples](./markdown_img/head_pic.png)
+
+![samples](./markdown_img/brush_test.png)
+
+![samples2](./markdown_img/text_cn_test.png)
+
+![samples3](./markdown_img/text_en_emoji_test.png)
+
+![samples4](./markdown_img/shape_type_test.png)
 
 ## LICENCE
 

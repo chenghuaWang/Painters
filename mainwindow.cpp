@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_about_window = new about_window();
     m_about_window->setWindowModality(Qt::WindowModal);
 
+    this->setWindowIcon(QIcon(":/icon/brush_paint_icon_193942.ico"));
 
     connect(ui->actionabout, &QAction::triggered, [=](){
         m_about_window->show();
