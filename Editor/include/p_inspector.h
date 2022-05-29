@@ -222,7 +222,10 @@ namespace painters {
     class p_image_inspector: public p_inspector {
         Q_OBJECT;
     public:
-        p_image_inspector(const std::string &name= "image inspector"): p_inspector(name) {};
+        p_image_inspector(const std::string &name= "image inspector"): p_inspector(name) {
+            m_scene = CREATE_REF(QGraphicsScene)();
+
+        };
 
         REGISTER_FUNC(image_path_editor, QLineEdit);
         REGISTER_FUNC(image_name_editor, QLineEdit);
@@ -235,8 +238,9 @@ namespace painters {
         REF(QLineEdit)  m_image_name_editor;
         REF(QLineEdit)  m_image_size_editor;
         REF(QPushButton)    m_image_get_pushbutton;
-        REF(QGraphicsScene) m_scene;
+        REF(QGraphicsScene) m_scene = nullptr;
         REF(QGraphicsView)  m_view;
+        QGraphicsPixmapItem *m_cur_image = nullptr;
 
         void __init__();
         void __redraw__();

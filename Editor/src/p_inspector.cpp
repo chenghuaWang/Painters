@@ -240,6 +240,23 @@ void p_image_inspector::slots_get_button() {
     if (m_path_name.isEmpty()) return;
     m_image_path_editor->setText(m_path_name);
     m_image_name_editor->setText(m_path_name);
+
+    if (m_cur_image) m_scene->removeItem(m_cur_image);
+
+    QImage tmp_image = QImage(m_path_name);
+    m_cur_image = new QGraphicsPixmapItem();
+    m_cur_image->setPixmap(QPixmap::fromImage(tmp_image));
+    int w = tmp_image.width();
+    int h = tmp_image.height();
+
+    qreal s1 = (qreal)m_view->width() / (qreal)w;
+    qreal s2 = (qreal)m_view->height() / (qreal)h;
+
+    m_cur_image->setScale(qMin(s1, s2));
+
+    m_scene->addItem(m_cur_image);
+
+    // update the scene.
     emit signal_image_update(m_path_name);
 }
 

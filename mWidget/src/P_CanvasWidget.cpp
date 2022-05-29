@@ -56,7 +56,7 @@ void p_canvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             m_cur_text_enable = true;
             m_cur_text = new p_text_component(__combine_name__(m_cur_image_cnt));
 
-            m_cur_text_string = QInputDialog::getText(nullptr, "Put the text you want to show", "Text:").toStdString();
+            m_cur_text_string = QInputDialog::getMultiLineText(nullptr, "Put the text you want to show", "Text:").toStdString();
             if (m_cur_text_string.empty()) return;
 
             m_cur_text->setPlainText(m_cur_text_string.c_str());
