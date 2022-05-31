@@ -4,7 +4,7 @@ A Qt final-project for zjgsu Desktop software development lecture.  **supervised
 
 ```
 Author: chenghua.wang
-Vision:	0.2.1
+Version:	0.2.1
 ```
 
 **To other schoolmates:**
