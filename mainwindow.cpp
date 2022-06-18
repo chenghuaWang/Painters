@@ -53,6 +53,22 @@ MainWindow::MainWindow(QWidget *parent)
 //        ui->horizontalSlider_3->setValue(0);
     });
 
+    connect(ui->actionNew_Project, &QAction::triggered, [=](){
+        emit ui->actionSave_Files->triggered();
+        for (auto &layer: m_default_scene.m_layer_stack) {
+            for (auto &item: layer->m_nodes) {
+                m_default_scene.removeItem(item.second);
+            }
+            layer->m_nodes.clear();
+            layer->m_type_translate_node.clear();
+        }
+        m_default_scene.m_layer_stack.m_layer_stack.clear();
+        this->slots_tree_node_update();
+        m_default_scene.m_cur_choosed_layer = nullptr;
+        m_default_scene.m_cur_choosed_item = nullptr;
+        m_default_scene.update();
+    });
+
     connect(ui->toolButton_shape, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_shape(bool)));
     connect(ui->toolButton_pen, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_pen(bool)));
     connect(ui->toolButton_image, SIGNAL(clicked(bool)), this, SLOT(slots_change_table_to_image(bool)));
